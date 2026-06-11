@@ -1,0 +1,47 @@
+# heimdall — Default Configuration
+# Override locally with config.local.yaml (gitignored), or with CLI flags.
+
+target:
+  # Directories to scan. Each root is treated as a separate "project".
+  # "." means the current working directory.
+  roots:
+    - .
+  # include / exclude accept glob patterns. When omitted, sensible
+  # language-agnostic defaults are used (see src/config/types.ts).
+  # include:
+  #   - "**/*.{ts,js,py,go,java,rb,rs,php,cs}"
+  # exclude:
+  #   - "**/node_modules/**"
+  #   - "**/dist/**"
+  #   - "**/*.test.*"
+
+ai:
+  backends:
+    - claude
+  concurrency:
+    claude: 2
+    gemini: 1
+    qwen: 1
+  timeoutMs: 120000
+
+scan:
+  categories:
+    - injection
+    - broken-access-control
+    - idor
+    - secrets
+    - sensitive-data-exposure
+    - cryptography
+    - ssrf
+    - path-traversal
+    - insecure-deserialization
+    - dependency
+    - misconfiguration
+  chunkSizeLines: 300
+
+output:
+  formats:
+    - json
+    - markdown
+  reportsDir: .security/reports
+  stateDbPath: .security/state.db

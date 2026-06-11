@@ -1,0 +1,55 @@
+{
+  "name": "heimdall-cli",
+  "version": "1.0.0",
+  "description": "AI-powered security scanner for any codebase, using local AI CLI backends (Claude, Gemini, Qwen)",
+  "license": "MIT",
+  "author": "Daniel Rrapi",
+  "keywords": [
+    "security",
+    "sast",
+    "vulnerability-scanner",
+    "static-analysis",
+    "ai",
+    "llm",
+    "sarif",
+    "cli"
+  ],
+  "type": "commonjs",
+  "bin": {
+    "heimdall": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "config.yaml",
+    "config.local.yaml.example",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "scan": "tsx src/index.ts",
+    "scan:dry-run": "tsx src/index.ts --dry-run",
+    "report:last": "tsx src/index.ts --report-only",
+    "reset-state": "rm -f .security/state.db",
+    "web": "tsx web/server.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.2",
+    "js-yaml": "^4.1.0",
+    "uuid": "^9.0.1",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.14.0",
+    "@types/uuid": "^9.0.8",
+    "@types/yargs": "^17.0.32",
+    "tsx": "^4.15.0",
+    "typescript": "^5.4.5"
+  }
+}

@@ -1,0 +1,29 @@
+# Local overrides — copy to config.local.yaml and customize.
+# This file is gitignored. Anything here is deep-merged over config.yaml.
+
+target:
+  # Point at one or more codebases to scan.
+  roots:
+    - ../my-app
+
+ai:
+  backends:
+    - claude
+    - gemini
+  concurrency:
+    claude: 1
+    gemini: 1
+
+scan:
+  # Narrow the scan to a subset of categories if you like.
+  categories:
+    - injection
+    - broken-access-control
+    - idor
+    - secrets
+
+output:
+  formats:
+    - json
+    - markdown
+    - sarif
