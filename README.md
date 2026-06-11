@@ -79,6 +79,7 @@ npm run web
 ```
 
 The dashboard shows:
+
 - **Configuration** — merged values from `config.yaml` + `config.local.yaml`
   (scan roots, backends, categories, output format)
 - **Past scans** — each report in `.security/reports/`, with severity breakdown
@@ -88,11 +89,11 @@ The dashboard shows:
 
 The server exposes three read-only JSON endpoints:
 
-| Endpoint | Description |
-|---|---|
-| `GET /api/config` | Merged active configuration |
-| `GET /api/reports` | List of past scans (metadata only) |
-| `GET /api/reports/:filename` | Full report JSON |
+| Endpoint                     | Description                        |
+| ---------------------------- | ---------------------------------- |
+| `GET /api/config`            | Merged active configuration        |
+| `GET /api/reports`           | List of past scans (metadata only) |
+| `GET /api/reports/:filename` | Full report JSON                   |
 
 `web/` is intentionally minimal and structured for migration: when you are ready
 to move to React or Svelte, point the Vite proxy at `localhost:4040/api` —
@@ -100,19 +101,19 @@ to move to React or Svelte, point the Vite proxy at `localhost:4040/api` —
 
 ## CLI options
 
-| Flag            | Type      | Description                                                          |
-| --------------- | --------- | ------------------------------------------------------------------- |
-| `--path`        | `string`  | Comma-separated directories to scan (default: current directory)    |
-| `--include`     | `string`  | Comma-separated glob patterns of files to scan                      |
-| `--exclude`     | `string`  | Comma-separated glob patterns to exclude                            |
-| `--backends`    | `string`  | AI backends to use: `claude`, `gemini`, `qwen` (comma-separated)    |
-| `--categories`  | `string`  | Vulnerability categories to look for (comma-separated)              |
-| `--concurrency` | `number`  | Override per-backend concurrency (applies to all backends)          |
-| `--output-dir`  | `string`  | Output directory for reports                                        |
-| `--config`      | `string`  | Path to a config file (default: `./config.yaml`)                    |
-| `--dry-run`     | `boolean` | List the files that would be scanned, without calling any AI        |
-| `--report-only` | `boolean` | Re-generate reports from the last JSON scan without new AI calls    |
-| `--no-dedup`    | `boolean` | Ignore the state DB and treat every finding as new                  |
+| Flag            | Type      | Description                                                      |
+| --------------- | --------- | ---------------------------------------------------------------- |
+| `--path`        | `string`  | Comma-separated directories to scan (default: current directory) |
+| `--include`     | `string`  | Comma-separated glob patterns of files to scan                   |
+| `--exclude`     | `string`  | Comma-separated glob patterns to exclude                         |
+| `--backends`    | `string`  | AI backends to use: `claude`, `gemini`, `qwen` (comma-separated) |
+| `--categories`  | `string`  | Vulnerability categories to look for (comma-separated)           |
+| `--concurrency` | `number`  | Override per-backend concurrency (applies to all backends)       |
+| `--output-dir`  | `string`  | Output directory for reports                                     |
+| `--config`      | `string`  | Path to a config file (default: `./config.yaml`)                 |
+| `--dry-run`     | `boolean` | List the files that would be scanned, without calling any AI     |
+| `--report-only` | `boolean` | Re-generate reports from the last JSON scan without new AI calls |
+| `--no-dedup`    | `boolean` | Ignore the state DB and treat every finding as new               |
 
 ## Configuration
 
@@ -132,7 +133,7 @@ Example `config.yaml`:
 ```yaml
 target:
   roots:
-    - .                       # directories to scan (each becomes a "project")
+    - . # directories to scan (each becomes a "project")
   # include / exclude default to language-agnostic patterns; override to narrow
   # include:
   #   - "**/*.{ts,js,py,go,java}"
@@ -143,7 +144,7 @@ ai:
   backends:
     - claude
   concurrency:
-    claude: 2                 # parallel AI calls per backend
+    claude: 2 # parallel AI calls per backend
     gemini: 1
     qwen: 1
   timeoutMs: 120000
@@ -161,10 +162,10 @@ scan:
     - insecure-deserialization
     - dependency
     - misconfiguration
-  chunkSizeLines: 300         # large files are split into chunks of this size
+  chunkSizeLines: 300 # large files are split into chunks of this size
 
 output:
-  formats:                    # any of: json, markdown, sarif
+  formats: # any of: json, markdown, sarif
     - json
     - markdown
   reportsDir: .security/reports
@@ -177,19 +178,19 @@ The built-in categories below are OWASP-flavoured. They are just strings, so you
 can also use your own — anything listed under `scan.categories` is fed to the AI
 as a focus area.
 
-| Category                   | Description                                                                  |
-| -------------------------- | ---------------------------------------------------------------------------- |
-| `injection`                | SQL, NoSQL, command, code, or template injection                             |
-| `broken-access-control`    | Missing or bypassable authentication / authorization                         |
-| `idor`                     | Insecure Direct Object Reference (accessing other users' resources by ID)    |
-| `secrets`                  | Hardcoded credentials, API keys, tokens, or private keys                     |
-| `sensitive-data-exposure`  | PII leakage, credential exposure, logging or returning sensitive data        |
-| `cryptography`             | Weak/broken crypto or insecure randomness used for security purposes         |
-| `ssrf`                     | Server-side request forgery via user-controlled URLs/hosts                   |
-| `path-traversal`           | Filesystem path traversal from unsanitized input                             |
-| `insecure-deserialization` | Deserialization of untrusted data without validation                         |
-| `dependency`               | Vulnerable third-party dependencies with known CVEs                          |
-| `misconfiguration`         | Insecure configuration (disabled TLS verification, permissive CORS, …)       |
+| Category                   | Description                                                               |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `injection`                | SQL, NoSQL, command, code, or template injection                          |
+| `broken-access-control`    | Missing or bypassable authentication / authorization                      |
+| `idor`                     | Insecure Direct Object Reference (accessing other users' resources by ID) |
+| `secrets`                  | Hardcoded credentials, API keys, tokens, or private keys                  |
+| `sensitive-data-exposure`  | PII leakage, credential exposure, logging or returning sensitive data     |
+| `cryptography`             | Weak/broken crypto or insecure randomness used for security purposes      |
+| `ssrf`                     | Server-side request forgery via user-controlled URLs/hosts                |
+| `path-traversal`           | Filesystem path traversal from unsanitized input                          |
+| `insecure-deserialization` | Deserialization of untrusted data without validation                      |
+| `dependency`               | Vulnerable third-party dependencies with known CVEs                       |
+| `misconfiguration`         | Insecure configuration (disabled TLS verification, permissive CORS, …)    |
 
 ## What gets scanned
 
@@ -304,6 +305,14 @@ warning without stopping the run.
 
 See [AGENTS.md](AGENTS.md) for a deeper guide to the codebase aimed at
 contributors and AI coding agents.
+
+## TODO
+
+- Improve file/folder regex
+- Add more backends (codex, ollama)
+- Add scan from commit diff
+- Add AI SDK for CI/CD compability
+- Add docker / script for installation
 
 ## License
 
