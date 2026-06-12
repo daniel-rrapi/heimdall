@@ -18,9 +18,8 @@ vulnerable dependencies, …) rather than being tied to any one framework.
 
 ## Preview
 
-<video width="auto" height="auto" controls>
-  <source src="./assets/demo/demo-video.mp4" type="video/mp4">
-</video>
+https://github.com/user-attachments/assets/68a77957-d472-4254-959f-35b76b116adc
+
 
 ## Prerequisites
 
