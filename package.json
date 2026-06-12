@@ -35,8 +35,9 @@
     "report:last": "tsx src/index.ts --report-only",
     "reset-state": "rm -f .security/state.db",
     "web": "tsx web/server.ts",
-    "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "build": "tsc && tsc -p tsconfig.web.json && node -e \"const fs=require('fs');fs.mkdirSync('dist/web',{recursive:true});fs.copyFileSync('web/index.html','dist/web/index.html')\"",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.web.json --noEmit",
+    "install:cli": "bash install.sh"
   },
   "dependencies": {
     "fast-glob": "^3.3.2",

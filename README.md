@@ -43,15 +43,34 @@ installed are skipped with a warning instead of failing the run.
 # optional: you can download the source code as a ZIP from Github
 git clone https://github.com/daniel-rrapi/heimdall.git
 cd heimdall
-
-npm install
-
-# optional: compile to dist/ and expose the `heimdall` binary
-npm run build
 ```
 
-You can run it without building via the npm scripts (which use `tsx`), or as a
-compiled CLI after `npm run build`.
+**Option A — install as a global CLI (macOS / Linux):**
+
+```bash
+./install.sh          # or: npm run install:cli
+```
+
+This builds the project and links a `heimdall` command into `~/.local/bin`
+(no sudo, adds it to your PATH if needed). Open a new terminal — or `source`
+your shell profile — and use it from any directory:
+
+```bash
+heimdall --path ../my-app --backends codex
+heimdall web          # local dashboard at http://localhost:4040
+```
+
+Re-run `./install.sh` after pulling updates; remove it with
+`./install.sh --uninstall`.
+
+**Option B — run from the repo (no install):**
+
+```bash
+npm install
+npm run build         # optional; only needed for the compiled binary / dashboard
+```
+
+Run it via the npm scripts (which use `tsx`) — see Quick start below.
 
 ## 🚀 Quick start
 
@@ -90,9 +109,13 @@ Heimdall includes a lightweight local UI to browse the active configuration
 and past scan reports.
 
 ```bash
-npm run web
+heimdall web      # if installed via ./install.sh
+npm run web       # from the repo (dev)
 # → Heimdall web UI: http://localhost:4040
 ```
+
+Both serve the dashboard for the project in the **current directory** (it reads
+`config.yaml` and `.security/reports/` from the cwd).
 
 The dashboard shows:
 

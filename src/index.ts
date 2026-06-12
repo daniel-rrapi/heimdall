@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as path from 'path'
 import * as fs from 'fs'
+import { spawn } from 'child_process'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import { loadConfig, applyCliOverrides } from './config/loader'
@@ -24,8 +25,29 @@ async function main() {
     .option('dry-run', { type: 'boolean', default: false, description: 'Discover files but do not call AI' })
     .option('report-only', { type: 'boolean', default: false, description: 'Re-generate reports from the last JSON scan' })
     .option('no-dedup', { type: 'boolean', default: false, description: 'Ignore the state DB (treat all findings as new)' })
+    .command('web', 'Start the local web dashboard (http://localhost:4040)')
     .help()
     .parseAsync()
+
+  // `heimdall web`: launch the compiled web dashboard as a child process.
+  // (For development without a build, use `npm run web` instead.)
+  if (argv._[0] === 'web') {
+    const serverPath = path.join(__dirname, 'web', 'server.js')
+    if (!fs.existsSync(serverPath)) {
+      console.error(`[web] Compiled server not found at ${serverPath}.`)
+      console.error('[web] Run "npm run build" first, or use "npm run web" for development.')
+      process.exit(1)
+    }
+    const child = spawn(process.execPath, [serverPath], { stdio: 'inherit' })
+    const code: number = await new Promise((resolve) => {
+      child.on('close', (c) => resolve(c ?? 0))
+      child.on('error', (err) => {
+        console.error('[web]', err instanceof Error ? err.message : err)
+        resolve(1)
+      })
+    })
+    process.exit(code)
+  }
 
   const cwd = process.cwd()
   const config = loadConfig(cwd, argv.config)

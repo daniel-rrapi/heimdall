@@ -31,13 +31,16 @@ If you find yourself hardcoding a framework concept (resolvers, controllers,
 
 ```bash
 npm install            # install deps
-npm run typecheck      # tsc --noEmit  ← run this after any change
-npm run build          # compile to dist/ (also produces the `heimdall` binary)
+npm run typecheck      # tsc --noEmit (src/ + web/)  ← run this after any change
+npm run build          # compile src/ → dist/ AND web/ → dist/web/ (+ copies index.html)
 
 npm run scan:dry-run -- --path .     # discovery only, no AI calls (fast, free)
 npm run scan -- --path ../my-app     # full scan
 npm run report:last                  # regenerate md/sarif from the latest JSON
 npm run reset-state                  # delete the dedup state DB
+
+./install.sh           # build + link `heimdall` into ~/.local/bin (no sudo)
+./install.sh --uninstall
 ```
 
 `--dry-run` is the cheapest way to test discovery/chunking changes — it never
@@ -68,7 +71,8 @@ CLI (index.ts)
 
 | Path                       | Responsibility |
 | -------------------------- | -------------- |
-| `src/index.ts`             | CLI parsing (yargs), `--report-only` shortcut, kicks off the run. Has a `#!/usr/bin/env node` shebang (keep it first line — it's the `bin`). |
+| `src/index.ts`             | CLI parsing (yargs), `--report-only` shortcut, kicks off the run. The `web` subcommand spawns the compiled dashboard (`dist/web/server.js`). Has a `#!/usr/bin/env node` shebang (keep it first line — it's the `bin`). |
+| `web/`                     | `server.ts` (zero-`src` deps: only Node built-ins + `js-yaml`) + `index.html`. Built by `tsconfig.web.json` → `dist/web/` (the `build` script also copies `index.html`, which `server.ts` reads via `__dirname`). |
 | `src/config/`              | `types.ts` defines `PipelineConfig`, `DEFAULT_CONFIG`, and the default include/exclude/manifest lists + `BUILTIN_CATEGORIES`. `loader.ts` reads `config.yaml`/`config.local.yaml` from cwd, deep-merges, and applies CLI overrides. |
 | `src/discovery/`           | `projectDiscovery.ts` resolves `target.roots` into `ProjectMeta` (name = dir basename). `fileCollector.ts` globs each project for source files (+ manifests when `dependency` is enabled), detects language from the extension. `types.ts` holds `ProjectMeta`, `ScanTarget`, `FileType`. |
 | `src/chunking/`            | `chunker.ts` splits files over `chunkSizeLines` at language-agnostic declaration boundaries, prepending the import block to continuation chunks. `contextBuilder.ts` wraps chunks into `ScanContext`. |
