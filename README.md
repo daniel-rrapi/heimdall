@@ -1,5 +1,7 @@
 # Heimdall
 
+<img width="1365" height="768" alt="heimdall" src="https://github.com/user-attachments/assets/5c555ed9-034f-4507-a230-dc76633a454b" />
+
 AI-powered security scanner for **any codebase**. Heimdall walks your source
 files, sends each one to one or more locally-installed AI CLIs (Claude, Gemini, Codex,
 Qwen), and aggregates their findings into structured, deduplicated reports
