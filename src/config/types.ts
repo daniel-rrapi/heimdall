@@ -1,3 +1,5 @@
+import { defaultReportsDir, defaultStateDbPath } from './paths'
+
 // A vulnerability category. The built-in set below is OWASP-flavoured, but any
 // string is accepted so users can define their own categories in config.
 export type VulnCategory = string
@@ -134,7 +136,10 @@ export const DEFAULT_CONFIG: PipelineConfig = {
   },
   output: {
     formats: ['json', 'markdown'],
-    reportsDir: '.security/reports',
-    stateDbPath: '.security/state.db',
+    // Default to a global location so reports/state are shared across projects
+    // and visible from `heimdall web` regardless of cwd. Set a relative path
+    // (e.g. ".security/reports") in config to keep them per-project instead.
+    reportsDir: defaultReportsDir(),
+    stateDbPath: defaultStateDbPath(),
   },
 }

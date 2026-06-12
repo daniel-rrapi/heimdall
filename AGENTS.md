@@ -111,8 +111,12 @@ CLI (index.ts)
 
 ## Gotchas
 
-- Paths: `reportsDir` and `stateDbPath` resolve relative to the **cwd**;
-  `relativePath` on targets/findings is relative to the **project root**.
+- Paths: `reportsDir`/`stateDbPath` default to a **global** data dir
+  (`~/.local/share/heimdall`, computed in `src/config/paths.ts`; override with
+  `HEIMDALL_DATA_DIR` / `XDG_DATA_HOME`). A **relative** value in config resolves
+  against the **cwd** (per-project). The web server (`web/server.ts`) mirrors
+  this resolution — keep the two in sync. `relativePath` on targets/findings is
+  relative to the **project root**.
 - The dedup fingerprint buckets line numbers to ±20 lines. Changing the
   fingerprint formula invalidates existing `state.db` entries.
 - Backends are spawned with `shell: false` and a timeout; never build a shell

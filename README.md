@@ -121,15 +121,18 @@ npm run web       # from the repo (dev)
 # → Heimdall web UI: http://localhost:4040
 ```
 
-Both serve the dashboard for the project in the **current directory** (it reads
-`config.yaml` and `.security/reports/` from the cwd).
+By default the dashboard reads reports from the **global** reports directory
+(`~/.local/share/heimdall/reports`), so it shows your scans no matter which
+directory you launch it from. `config.yaml` / `config.local.yaml` are still read
+from the current directory. (If a project pins `output.reportsDir` to a relative
+path, run `heimdall web` from that project to see those reports.)
 
 The dashboard shows:
 
-- **Configuration** — merged values from `config.yaml` + `config.local.yaml`
-  (scan roots, backends, categories, output format)
-- **Past scans** — each report in `.security/reports/`, with severity breakdown
-  and statistics at a glance
+- **Configuration** — merged values from `config.yaml` + `config.local.yaml`,
+  including the effective reports directory
+- **Past scans** — each report in the active reports directory, with severity
+  breakdown and statistics at a glance
 - **Findings** — click any scan to see findings grouped by severity, with file
   location, description, recommendation, and code snippet
 
@@ -217,8 +220,10 @@ output:
   formats: # any of: json, markdown, sarif
     - json
     - markdown
-  reportsDir: .security/reports
-  stateDbPath: .security/state.db
+  # Default: ~/.local/share/heimdall/{reports,state.db} (global, shared across
+  # projects). Set relative paths to keep them per-project instead:
+  # reportsDir: .security/reports
+  # stateDbPath: .security/state.db
 ```
 
 ## Change AI models
@@ -294,7 +299,11 @@ declaration boundaries so they fit comfortably in a single AI call.
 
 ## Reports
 
-Reports are written to `.security/reports/` as `scan_YYYY-MM-DD_HH-MM-SS.{ext}`.
+Reports are written as `scan_YYYY-MM-DD_HH-MM-SS.{ext}` to the global reports
+directory `~/.local/share/heimdall/reports/` by default (shared across projects,
+so `heimdall web` finds them from anywhere). Override the location with the
+`HEIMDALL_DATA_DIR` / `XDG_DATA_HOME` env vars, or per-project by setting a
+relative `output.reportsDir` (or `--output-dir`) — e.g. `.security/reports`.
 
 **JSON** — complete data, ideal for CI/CD integrations and scripts:
 
@@ -333,7 +342,8 @@ Heimdall avoids reporting the same issue twice:
 - **Cross-backend (same run):** if Claude and Gemini flag the same issue in the
   same place, it appears once with `detectedBy: ["claude", "gemini"]`.
 - **Cross-run:** issues seen in a previous run are marked `isNew: false` and not
-  counted as new. State is persisted to `.security/state.db` (a JSON file).
+  counted as new. State is persisted to `~/.local/share/heimdall/state.db` (a
+  JSON file) by default, alongside the reports.
 
 A finding's fingerprint is a SHA-256 hash of: project + file path + vulnerability
 type + normalized title + line range (bucketed to ±20 lines so small edits don't

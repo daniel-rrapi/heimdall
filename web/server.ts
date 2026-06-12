@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as http from 'node:http'
 import * as fs from 'node:fs'
+import * as os from 'node:os'
 import * as path from 'node:path'
 import * as yaml from 'js-yaml'
 
@@ -9,8 +10,24 @@ const CWD = process.cwd()
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
+// Global data dir — mirrors src/config/paths.ts (web compiles with a separate
+// rootDir and can't import from src/). Keep in sync.
+function globalDataDir(): string {
+  if (process.env.HEIMDALL_DATA_DIR) return process.env.HEIMDALL_DATA_DIR
+  const base = process.env.XDG_DATA_HOME || path.join(os.homedir(), '.local', 'share')
+  return path.join(base, 'heimdall')
+}
+
+// Effective reports directory — mirrors the scanner: an explicit
+// output.reportsDir in config wins (absolute as-is, relative to cwd); otherwise
+// the global default (~/.local/share/heimdall/reports).
 function reportsDir(): string {
-  return path.join(CWD, '.security', 'reports')
+  const cfg = loadMergedConfig() as { output?: { reportsDir?: unknown } }
+  const configured = cfg?.output?.reportsDir
+  if (typeof configured === 'string' && configured.length > 0) {
+    return path.isAbsolute(configured) ? configured : path.join(CWD, configured)
+  }
+  return path.join(globalDataDir(), 'reports')
 }
 
 function configPath(filename: string): string {
@@ -121,7 +138,11 @@ const server = http.createServer((req, res) => {
 
   if (pathname === '/api/config') {
     try {
-      sendJson(res, 200, loadMergedConfig())
+      const cfg = loadMergedConfig() as Record<string, unknown>
+      // Surface the *effective* reports dir (incl. the global default) so the
+      // dashboard shows where these reports actually come from.
+      const output = { ...((cfg.output as Record<string, unknown>) ?? {}), reportsDir: reportsDir() }
+      sendJson(res, 200, { ...cfg, output })
     } catch (err) {
       sendJson(res, 500, { error: String(err) })
     }
