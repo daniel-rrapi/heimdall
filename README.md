@@ -2,6 +2,8 @@
 
 <img width="1365" height="768" alt="heimdall" src="https://github.com/user-attachments/assets/5c555ed9-034f-4507-a230-dc76633a454b" />
 
+> In Norse mythology, *Heimdall* is the all-seeing, all-hearing Guardian of Asgard.
+
 AI-powered security scanner for **any codebase**. Heimdall walks your source
 files, sends each one to one or more locally-installed AI CLIs (Claude, Gemini, Codex, Qwen, OpenCode), and aggregates their findings into structured, deduplicated reports
 (JSON, Markdown, SARIF).
