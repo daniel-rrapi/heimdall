@@ -26,6 +26,7 @@ https://github.com/user-attachments/assets/68a77957-d472-4254-959f-35b76b116adc
 ## Prerequisites
 
 - Node.js 18+
+- OPTIONAL: Git (for cloning the source code, you can also download it as a ZIP from Github) 
 - At least one of the following AI CLIs installed and authenticated:
   - [Claude Code](https://claude.com/claude-code) — `claude`
   - [Gemini CLI](https://github.com/google-gemini/gemini-cli) — `gemini`
@@ -38,6 +39,10 @@ installed are skipped with a warning instead of failing the run.
 ## Install
 
 ```bash
+# optional: you can download the source code as a ZIP from Github
+git clone https://github.com/daniel-rrapi/heimdall.git
+cd heimdall
+
 npm install
 
 # optional: compile to dist/ and expose the `heimdall` binary
