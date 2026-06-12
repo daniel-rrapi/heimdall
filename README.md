@@ -39,31 +39,38 @@ installed are skipped with a warning instead of failing the run.
 
 ## 🛠️ Install
 
-```bash
-# optional: you can download the source code as a ZIP from Github
-git clone https://github.com/daniel-rrapi/heimdall.git
-cd heimdall
-```
-
-**Option A — install as a global CLI (macOS / Linux):**
+**Option A — one-line install (macOS / Linux, no clone needed):**
 
 ```bash
-./install.sh          # or: npm run install:cli
+curl -fsSL https://raw.githubusercontent.com/daniel-rrapi/heimdall/main/install.sh | bash
 ```
 
-This builds the project and links a `heimdall` command into `~/.local/bin`
-(no sudo, adds it to your PATH if needed). Open a new terminal — or `source`
-your shell profile — and use it from any directory:
+This clones heimdall into `~/.heimdall`, builds it, and links a `heimdall`
+command into `~/.local/bin` (no sudo, adds it to your PATH if needed). **Re-run
+the same command to update.** Override the location/branch with the
+`HEIMDALL_HOME` / `HEIMDALL_REF` env vars.
+
+> Piping a remote script to `bash` runs code from the internet. To inspect it
+> first: `curl -fsSL <url> -o install.sh && less install.sh && bash install.sh`.
+
+Then use it from any directory (open a new terminal first if PATH was updated):
 
 ```bash
 heimdall --path ../my-app --backends codex
 heimdall web          # local dashboard at http://localhost:4040
 ```
 
-Re-run `./install.sh` after pulling updates; remove it with
-`./install.sh --uninstall`.
+Uninstall: `~/.heimdall/install.sh --uninstall`.
 
-**Option B — run from the repo (no install):**
+**Option B — from a clone (global CLI):**
+
+```bash
+git clone https://github.com/daniel-rrapi/heimdall.git
+cd heimdall
+./install.sh          # or: npm run install:cli
+```
+
+**Option C — run from the repo (no install):**
 
 ```bash
 npm install
