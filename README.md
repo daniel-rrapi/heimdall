@@ -1,4 +1,4 @@
-# Heimdall
+# 🔱 Heimdall
 
 <img width="1365" height="768" alt="heimdall" src="https://github.com/user-attachments/assets/5c555ed9-034f-4507-a230-dc76633a454b" />
 
@@ -19,11 +19,11 @@ vulnerable dependencies, …) rather than being tied to any one framework.
 > not as proof. Like any LLM-based tool it can produce false positives and miss
 > real issues.
 
-## Preview
+## 📹 Preview
 
 https://github.com/user-attachments/assets/68a77957-d472-4254-959f-35b76b116adc
 
-## Prerequisites
+## ☑️ Prerequisites
 
 - Node.js 18+
 - OPTIONAL: Git (for cloning the source code, you can also download it as a ZIP from Github)
@@ -37,7 +37,7 @@ https://github.com/user-attachments/assets/68a77957-d472-4254-959f-35b76b116adc
 Heimdall shells out to whichever of these is available; backends that aren't
 installed are skipped with a warning instead of failing the run.
 
-## Install
+## 🛠️ Install
 
 ```bash
 # optional: you can download the source code as a ZIP from Github
@@ -53,7 +53,7 @@ npm run build
 You can run it without building via the npm scripts (which use `tsx`), or as a
 compiled CLI after `npm run build`.
 
-## Quick start
+## 🚀 Quick start
 
 ```bash
 # See which files would be scanned, without calling any AI
@@ -84,7 +84,7 @@ After `npm run build`, the same thing as a binary:
 heimdall --path ../my-app --backends claude,gemini
 ```
 
-## Web dashboard
+## 🌐 Web dashboard
 
 Heimdall includes a lightweight local UI to browse the active configuration
 and past scan reports.
