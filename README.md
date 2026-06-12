@@ -22,8 +22,8 @@ vulnerable dependencies, …) rather than being tied to any one framework.
 - At least one of the following AI CLIs installed and authenticated:
   - [Claude Code](https://claude.com/claude-code) — `claude`
   - [Gemini CLI](https://github.com/google-gemini/gemini-cli) — `gemini`
-  - [Qwen Code](https://github.com/QwenLM/qwen-code) — `qwen-code` or `qwen`
   - [OpenAI Codex CLI](https://github.com/openai/codex) — `codex`
+  - [Qwen Code](https://github.com/QwenLM/qwen-code) — `qwen-code` or `qwen`
 
 Heimdall shells out to whichever of these is available; backends that aren't
 installed are skipped with a warning instead of failing the run.
