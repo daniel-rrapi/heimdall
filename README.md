@@ -1,8 +1,8 @@
 # Heimdall
 
 AI-powered security scanner for **any codebase**. Heimdall walks your source
-files, sends each one to one or more locally-installed AI CLIs (Claude, Gemini,
-Qwen, Codex), and aggregates their findings into structured, deduplicated reports
+files, sends each one to one or more locally-installed AI CLIs (Claude, Gemini, Codex,
+Qwen), and aggregates their findings into structured, deduplicated reports
 (JSON, Markdown, SARIF).
 
 It is language-agnostic — TypeScript, JavaScript, Python, Go, Java, Kotlin,
@@ -15,6 +15,12 @@ vulnerable dependencies, …) rather than being tied to any one framework.
 > Heimdall is a triage aid, not a guarantee. Treat findings as leads to review,
 > not as proof. Like any LLM-based tool it can produce false positives and miss
 > real issues.
+
+## Preview
+
+<video width="auto" height="auto" controls>
+  <source src="./assets/demo/demo-video.mp4" type="video/mp4">
+</video>
 
 ## Prerequisites
 
@@ -330,9 +336,9 @@ contributors and AI coding agents.
 
 ## TODO
 
+- Add docker / script for installation
 - Add scan from commit diff
 - Add AI SDK for CI/CD compability
-- Add docker / script for installation
 
 ## License
 
