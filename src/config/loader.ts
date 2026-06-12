@@ -89,7 +89,7 @@ export function applyCliOverrides(
     result.scan.categories = split(args.categories)
   }
   if (args.concurrency !== undefined) {
-    result.ai.concurrency = { claude: args.concurrency, gemini: args.concurrency, qwen: args.concurrency, codex: args.concurrency }
+    result.ai.concurrency = { claude: args.concurrency, gemini: args.concurrency, qwen: args.concurrency, codex: args.concurrency, opencode: args.concurrency }
   }
   if (args.outputDir) {
     result.output.reportsDir = args.outputDir

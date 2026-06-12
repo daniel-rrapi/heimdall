@@ -3,6 +3,7 @@ import { claudeBackend } from './backends/claude'
 import { geminiBackend } from './backends/gemini'
 import { qwenBackend } from './backends/qwen'
 import { codexBackend } from './backends/codex'
+import { opencodeBackend } from './backends/opencode'
 import { AIBackendName } from '../config/types'
 
 const REGISTRY: Record<AIBackendName, AIBackend> = {
@@ -10,6 +11,7 @@ const REGISTRY: Record<AIBackendName, AIBackend> = {
   gemini: geminiBackend,
   qwen: qwenBackend,
   codex: codexBackend,
+  opencode: opencodeBackend,
 }
 
 export async function resolveBackends(names: AIBackendName[]): Promise<AIBackend[]> {

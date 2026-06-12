@@ -3,8 +3,7 @@
 <img width="1365" height="768" alt="heimdall" src="https://github.com/user-attachments/assets/5c555ed9-034f-4507-a230-dc76633a454b" />
 
 AI-powered security scanner for **any codebase**. Heimdall walks your source
-files, sends each one to one or more locally-installed AI CLIs (Claude, Gemini, Codex,
-Qwen), and aggregates their findings into structured, deduplicated reports
+files, sends each one to one or more locally-installed AI CLIs (Claude, Gemini, Codex, Qwen, OpenCode), and aggregates their findings into structured, deduplicated reports
 (JSON, Markdown, SARIF).
 
 It is language-agnostic — TypeScript, JavaScript, Python, Go, Java, Kotlin,
@@ -32,6 +31,7 @@ https://github.com/user-attachments/assets/68a77957-d472-4254-959f-35b76b116adc
   - [Gemini CLI](https://github.com/google-gemini/gemini-cli) — `gemini`
   - [OpenAI Codex CLI](https://github.com/openai/codex) — `codex`
   - [Qwen Code](https://github.com/QwenLM/qwen-code) — `qwen-code` or `qwen`
+  - [OpenCode](https://opencode.ai) — `opencode`
 
 Heimdall shells out to whichever of these is available; backends that aren't
 installed are skipped with a warning instead of failing the run.
@@ -119,7 +119,7 @@ The server exposes three read-only JSON endpoints:
 | `--exclude`       | `string`  | Glob patterns to exclude — **replaces** the defaults (comma-separated)              |
 | `--include-extra` | `string`  | Globs to **add** to the default include set, keeping the defaults (comma-separated) |
 | `--exclude-extra` | `string`  | Globs to **add** to the default exclusions, keeping the defaults (comma-separated)  |
-| `--backends`      | `string`  | AI backends to use: `claude`, `gemini`, `qwen`, `codex` (comma-separated)           |
+| `--backends`      | `string`  | AI backends to use: `claude`, `gemini`, `qwen`, `codex`, `opencode` (comma-separated)           |
 | `--categories`    | `string`  | Vulnerability categories to look for (comma-separated)                              |
 | `--concurrency`   | `number`  | Override per-backend concurrency (applies to all backends)                          |
 | `--output-dir`    | `string`  | Output directory for reports                                                        |
@@ -161,10 +161,10 @@ ai:
     - claude
   concurrency:
     claude: 2 # parallel AI calls per backend
-    claude: 2 # parallel AI calls per backend
     gemini: 1
     qwen: 1
     codex: 1
+    opencode: 1
   timeoutMs: 120000
 
 scan:
@@ -321,7 +321,7 @@ src/
 ├── discovery/               ← resolve scan roots into projects, collect target files
 ├── chunking/                ← split large files into chunks
 ├── ai/
-│   ├── backends/            ← claude.ts, gemini.ts, qwen.ts (+ spawn helper)
+│   ├── backends/            ← claude.ts, gemini.ts, qwen.ts, codex.ts, opencode.ts
 │   ├── prompts/             ← system prompt + per-file prompt builder
 │   ├── registry.ts          ← resolve which backends are installed
 │   └── parser.ts            ← lenient JSON extraction from AI output

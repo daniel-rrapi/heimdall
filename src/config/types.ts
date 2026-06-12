@@ -16,7 +16,7 @@ export const BUILTIN_CATEGORIES = [
   'misconfiguration',
 ] as const
 
-export type AIBackendName = 'claude' | 'gemini' | 'qwen' | 'codex'
+export type AIBackendName = 'claude' | 'gemini' | 'qwen' | 'codex' | 'opencode'
 
 export type ReportFormat = 'json' | 'markdown' | 'sarif'
 
@@ -124,7 +124,7 @@ export const DEFAULT_CONFIG: PipelineConfig = {
   },
   ai: {
     backends: ['claude'],
-    concurrency: { claude: 2, gemini: 1, qwen: 1, codex: 1 },
+    concurrency: { claude: 2, gemini: 1, qwen: 1, codex: 1, opencode: 1 },
     timeoutMs: 120_000,
   },
   scan: {
