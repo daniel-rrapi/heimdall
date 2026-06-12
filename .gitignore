@@ -3,3 +3,5 @@ dist/
 .security/reports/
 .security/state.db
 config.local.yaml
+
+.hermes/
