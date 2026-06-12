@@ -343,6 +343,7 @@ contributors and AI coding agents.
 ## TODO
 
 - Add docker / script for installation
+- Change between AI models from the same backend
 - Add scan from commit diff
 - Add AI SDK for CI/CD compability
 
