@@ -21,17 +21,16 @@ vulnerable dependencies, …) rather than being tied to any one framework.
 
 https://github.com/user-attachments/assets/68a77957-d472-4254-959f-35b76b116adc
 
-
 ## Prerequisites
 
 - Node.js 18+
-- OPTIONAL: Git (for cloning the source code, you can also download it as a ZIP from Github) 
+- OPTIONAL: Git (for cloning the source code, you can also download it as a ZIP from Github)
 - At least one of the following AI CLIs installed and authenticated:
   - [Claude Code](https://claude.com/claude-code) — `claude`
   - [Gemini CLI](https://github.com/google-gemini/gemini-cli) — `gemini`
   - [OpenAI Codex CLI](https://github.com/openai/codex) — `codex`
-  - [Qwen Code](https://github.com/QwenLM/qwen-code) — `qwen-code` or `qwen`
   - [OpenCode](https://opencode.ai) — `opencode`
+  - [Qwen Code](https://github.com/QwenLM/qwen-code) — `qwen-code` or `qwen`
 
 Heimdall shells out to whichever of these is available; backends that aren't
 installed are skipped with a warning instead of failing the run.
@@ -112,21 +111,21 @@ The server exposes three read-only JSON endpoints:
 
 ## CLI options
 
-| Flag              | Type      | Description                                                                         |
-| ----------------- | --------- | ----------------------------------------------------------------------------------- |
-| `--path`          | `string`  | Comma-separated directories to scan (default: current directory)                    |
-| `--include`       | `string`  | Glob patterns of files to scan — **replaces** the defaults (comma-separated)        |
-| `--exclude`       | `string`  | Glob patterns to exclude — **replaces** the defaults (comma-separated)              |
-| `--include-extra` | `string`  | Globs to **add** to the default include set, keeping the defaults (comma-separated) |
-| `--exclude-extra` | `string`  | Globs to **add** to the default exclusions, keeping the defaults (comma-separated)  |
-| `--backends`      | `string`  | AI backends to use: `claude`, `gemini`, `qwen`, `codex`, `opencode` (comma-separated)           |
-| `--categories`    | `string`  | Vulnerability categories to look for (comma-separated)                              |
-| `--concurrency`   | `number`  | Override per-backend concurrency (applies to all backends)                          |
-| `--output-dir`    | `string`  | Output directory for reports                                                        |
-| `--config`        | `string`  | Path to a config file (default: `./config.yaml`)                                    |
-| `--dry-run`       | `boolean` | List the files that would be scanned, without calling any AI                        |
-| `--report-only`   | `boolean` | Re-generate reports from the last JSON scan without new AI calls                    |
-| `--no-dedup`      | `boolean` | Ignore the state DB and treat every finding as new                                  |
+| Flag              | Type      | Description                                                                           |
+| ----------------- | --------- | ------------------------------------------------------------------------------------- |
+| `--path`          | `string`  | Comma-separated directories to scan (default: current directory)                      |
+| `--include`       | `string`  | Glob patterns of files to scan — **replaces** the defaults (comma-separated)          |
+| `--exclude`       | `string`  | Glob patterns to exclude — **replaces** the defaults (comma-separated)                |
+| `--include-extra` | `string`  | Globs to **add** to the default include set, keeping the defaults (comma-separated)   |
+| `--exclude-extra` | `string`  | Globs to **add** to the default exclusions, keeping the defaults (comma-separated)    |
+| `--backends`      | `string`  | AI backends to use: `claude`, `gemini`, `qwen`, `codex`, `opencode` (comma-separated) |
+| `--categories`    | `string`  | Vulnerability categories to look for (comma-separated)                                |
+| `--concurrency`   | `number`  | Override per-backend concurrency (applies to all backends)                            |
+| `--output-dir`    | `string`  | Output directory for reports                                                          |
+| `--config`        | `string`  | Path to a config file (default: `./config.yaml`)                                      |
+| `--dry-run`       | `boolean` | List the files that would be scanned, without calling any AI                          |
+| `--report-only`   | `boolean` | Re-generate reports from the last JSON scan without new AI calls                      |
+| `--no-dedup`      | `boolean` | Ignore the state DB and treat every finding as new                                    |
 
 ## Configuration
 
@@ -191,6 +190,10 @@ output:
   reportsDir: .security/reports
   stateDbPath: .security/state.db
 ```
+
+## Change AI models
+
+Heimdall uses the default AI model for all AI coding tools. To switch models, open the AI coding tool and select your preferred model manually. Once set, Heimdall will automatically use that model.
 
 ## Vulnerability categories
 
