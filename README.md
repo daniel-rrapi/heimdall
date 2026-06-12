@@ -182,10 +182,8 @@ scan:
     - dependency
     - misconfiguration
   chunkSizeLines: 300 # large files are split into chunks of this size
-  chunkSizeLines: 300 # large files are split into chunks of this size
 
 output:
-  formats: # any of: json, markdown, sarif
   formats: # any of: json, markdown, sarif
     - json
     - markdown
