@@ -12,8 +12,10 @@ import { Report } from './report/types'
 async function main() {
   const argv = await yargs(hideBin(process.argv))
     .option('path', { type: 'string', description: 'Comma-separated directories to scan (default: current directory)' })
-    .option('include', { type: 'string', description: 'Comma-separated glob patterns of files to scan' })
-    .option('exclude', { type: 'string', description: 'Comma-separated glob patterns to exclude' })
+    .option('include', { type: 'string', description: 'Comma-separated glob patterns of files to scan (replaces the defaults)' })
+    .option('exclude', { type: 'string', description: 'Comma-separated glob patterns to exclude (replaces the defaults)' })
+    .option('include-extra', { type: 'string', description: 'Comma-separated globs to ADD to the default include set' })
+    .option('exclude-extra', { type: 'string', description: 'Comma-separated globs to ADD to the default exclusions' })
     .option('backends', { type: 'string', description: 'Comma-separated AI backend names (claude,gemini,qwen)' })
     .option('categories', { type: 'string', description: 'Comma-separated vulnerability categories' })
     .option('concurrency', { type: 'number', description: 'Override per-backend concurrency (applies to all)' })
@@ -31,6 +33,8 @@ async function main() {
     path: argv.path,
     include: argv.include,
     exclude: argv.exclude,
+    includeExtra: argv['include-extra'],
+    excludeExtra: argv['exclude-extra'],
     backends: argv.backends,
     categories: argv.categories,
     concurrency: argv.concurrency,

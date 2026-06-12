@@ -5,6 +5,12 @@ target:
   # Point at one or more codebases to scan.
   roots:
     - ../my-app
+  # Skip / scan a few extra paths on top of the built-in defaults (these are
+  # appended, so node_modules, dist, tests, … stay excluded). Use include/exclude
+  # instead if you want to replace the defaults entirely.
+  # excludeExtra:
+  #   - "**/fixtures/**"
+  #   - "**/*.pb.go"
 
 ai:
   backends:

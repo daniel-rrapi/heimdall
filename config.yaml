@@ -8,12 +8,21 @@ target:
     - .
   # include / exclude accept glob patterns. When omitted, sensible
   # language-agnostic defaults are used (see src/config/types.ts).
+  #
+  # include / exclude REPLACE the built-in defaults — use them for full control
+  # (e.g. scan only Python):
   # include:
-  #   - "**/*.{ts,js,py,go,java,rb,rs,php,cs}"
+  #   - "**/*.py"
   # exclude:
-  #   - "**/node_modules/**"
-  #   - "**/dist/**"
-  #   - "**/*.test.*"
+  #   - "**/node_modules/**"   # ⚠️ replaces ALL defaults; you must re-list them
+  #
+  # includeExtra / excludeExtra ADD to the defaults without losing them — this
+  # is what you want to just scan/skip a few extra paths:
+  # excludeExtra:
+  #   - "**/fixtures/**"
+  #   - "**/*.pb.go"
+  # includeExtra:
+  #   - "**/*.yaml"
 
 ai:
   backends:

@@ -49,6 +49,8 @@ export function applyCliOverrides(
     path?: string
     include?: string
     exclude?: string
+    includeExtra?: string
+    excludeExtra?: string
     backends?: string
     categories?: string
     concurrency?: number
@@ -73,6 +75,12 @@ export function applyCliOverrides(
   }
   if (args.exclude) {
     result.target.exclude = split(args.exclude)
+  }
+  if (args.includeExtra) {
+    result.target.includeExtra = split(args.includeExtra)
+  }
+  if (args.excludeExtra) {
+    result.target.excludeExtra = split(args.excludeExtra)
   }
   if (args.backends) {
     result.ai.backends = split(args.backends) as PipelineConfig['ai']['backends']

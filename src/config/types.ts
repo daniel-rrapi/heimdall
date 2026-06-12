@@ -29,6 +29,11 @@ export interface PipelineConfig {
     include: string[]
     // Glob patterns to exclude from scanning.
     exclude: string[]
+    // Globs *added* to include/exclude, keeping the built-in defaults intact.
+    // Use these to scan/skip a few extra paths; set include/exclude instead to
+    // replace the defaults entirely.
+    includeExtra: string[]
+    excludeExtra: string[]
   }
   ai: {
     backends: AIBackendName[]
@@ -114,6 +119,8 @@ export const DEFAULT_CONFIG: PipelineConfig = {
     roots: ['.'],
     include: DEFAULT_INCLUDE,
     exclude: DEFAULT_EXCLUDE,
+    includeExtra: [],
+    excludeExtra: [],
   },
   ai: {
     backends: ['claude'],

@@ -86,11 +86,16 @@ export async function collectTargets(
   const targets: ScanTarget[] = []
   const seen = new Set<string>()
 
+  // Extra globs are appended so the built-in defaults are preserved; set
+  // include/exclude in config to replace the defaults entirely instead.
+  const include = [...config.target.include, ...config.target.includeExtra]
+  const exclude = [...config.target.exclude, ...config.target.excludeExtra]
+
   // 1. Source files matching the include globs.
-  const sourceFiles = await fg(config.target.include, {
+  const sourceFiles = await fg(include, {
     cwd: project.rootDir,
     absolute: true,
-    ignore: config.target.exclude,
+    ignore: exclude,
     followSymbolicLinks: false,
     dot: false,
   })
@@ -107,7 +112,7 @@ export async function collectTargets(
     const manifests = await fg(manifestGlobs, {
       cwd: project.rootDir,
       absolute: true,
-      ignore: config.target.exclude,
+      ignore: exclude,
       followSymbolicLinks: false,
       dot: false,
     })

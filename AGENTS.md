@@ -100,8 +100,10 @@ CLI (index.ts)
   `src/report/`, and wire it into `orchestrator.ts` (and the `report-only`
   branch in `index.ts`).
 - **Change what gets discovered:** tune `DEFAULT_INCLUDE` / `DEFAULT_EXCLUDE` /
-  `DEFAULT_MANIFEST_FILES` in `config/types.ts`, or override per-run via config
-  / `--include` / `--exclude`.
+  `DEFAULT_MANIFEST_FILES` in `config/types.ts`. Per run, `include` / `exclude`
+  (config or `--include` / `--exclude`) **replace** those defaults, while
+  `includeExtra` / `excludeExtra` (or `--include-extra` / `--exclude-extra`)
+  are **appended** to them — see `collectTargets` in `discovery/fileCollector.ts`.
 
 ## Gotchas
 
