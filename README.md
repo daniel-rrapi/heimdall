@@ -2,7 +2,7 @@
 
 AI-powered security scanner for **any codebase**. Heimdall walks your source
 files, sends each one to one or more locally-installed AI CLIs (Claude, Gemini,
-Qwen), and aggregates their findings into structured, deduplicated reports
+Qwen, Codex), and aggregates their findings into structured, deduplicated reports
 (JSON, Markdown, SARIF).
 
 It is language-agnostic — TypeScript, JavaScript, Python, Go, Java, Kotlin,
@@ -23,6 +23,7 @@ vulnerable dependencies, …) rather than being tied to any one framework.
   - [Claude Code](https://claude.com/claude-code) — `claude`
   - [Gemini CLI](https://github.com/google-gemini/gemini-cli) — `gemini`
   - [Qwen Code](https://github.com/QwenLM/qwen-code) — `qwen-code` or `qwen`
+  - [OpenAI Codex CLI](https://github.com/openai/codex) — `codex`
 
 Heimdall shells out to whichever of these is available; backends that aren't
 installed are skipped with a warning instead of failing the run.
@@ -96,15 +97,6 @@ The server exposes three read-only JSON endpoints:
 | `GET /api/config`            | Merged active configuration        |
 | `GET /api/reports`           | List of past scans (metadata only) |
 | `GET /api/reports/:filename` | Full report JSON                   |
-| Endpoint                     | Description                        |
-| ---------------------------- | ---------------------------------- |
-| `GET /api/config`            | Merged active configuration        |
-| `GET /api/reports`           | List of past scans (metadata only) |
-| `GET /api/reports/:filename` | Full report JSON                   |
-
-`web/` is intentionally minimal and structured for migration: when you are ready
-to move to React or Svelte, point the Vite proxy at `localhost:4040/api` —
-`web/server.ts` does not need to change.
 
 ## CLI options
 
@@ -115,7 +107,7 @@ to move to React or Svelte, point the Vite proxy at `localhost:4040/api` —
 | `--exclude`       | `string`  | Glob patterns to exclude — **replaces** the defaults (comma-separated)              |
 | `--include-extra` | `string`  | Globs to **add** to the default include set, keeping the defaults (comma-separated) |
 | `--exclude-extra` | `string`  | Globs to **add** to the default exclusions, keeping the defaults (comma-separated)  |
-| `--backends`      | `string`  | AI backends to use: `claude`, `gemini`, `qwen` (comma-separated)                    |
+| `--backends`      | `string`  | AI backends to use: `claude`, `gemini`, `qwen`, `codex` (comma-separated)           |
 | `--categories`    | `string`  | Vulnerability categories to look for (comma-separated)                              |
 | `--concurrency`   | `number`  | Override per-backend concurrency (applies to all backends)                          |
 | `--output-dir`    | `string`  | Output directory for reports                                                        |
@@ -160,6 +152,7 @@ ai:
     claude: 2 # parallel AI calls per backend
     gemini: 1
     qwen: 1
+    codex: 1
   timeoutMs: 120000
 
 scan:
@@ -193,19 +186,6 @@ The built-in categories below are OWASP-flavoured. They are just strings, so you
 can also use your own — anything listed under `scan.categories` is fed to the AI
 as a focus area.
 
-| Category                   | Description                                                               |
-| -------------------------- | ------------------------------------------------------------------------- |
-| `injection`                | SQL, NoSQL, command, code, or template injection                          |
-| `broken-access-control`    | Missing or bypassable authentication / authorization                      |
-| `idor`                     | Insecure Direct Object Reference (accessing other users' resources by ID) |
-| `secrets`                  | Hardcoded credentials, API keys, tokens, or private keys                  |
-| `sensitive-data-exposure`  | PII leakage, credential exposure, logging or returning sensitive data     |
-| `cryptography`             | Weak/broken crypto or insecure randomness used for security purposes      |
-| `ssrf`                     | Server-side request forgery via user-controlled URLs/hosts                |
-| `path-traversal`           | Filesystem path traversal from unsanitized input                          |
-| `insecure-deserialization` | Deserialization of untrusted data without validation                      |
-| `dependency`               | Vulnerable third-party dependencies with known CVEs                       |
-| `misconfiguration`         | Insecure configuration (disabled TLS verification, permissive CORS, …)    |
 | Category                   | Description                                                               |
 | -------------------------- | ------------------------------------------------------------------------- |
 | `injection`                | SQL, NoSQL, command, code, or template injection                          |
@@ -350,8 +330,6 @@ contributors and AI coding agents.
 
 ## TODO
 
-- Improve file/folder regex
-- Add more backends (codex, ollama)
 - Add scan from commit diff
 - Add AI SDK for CI/CD compability
 - Add docker / script for installation

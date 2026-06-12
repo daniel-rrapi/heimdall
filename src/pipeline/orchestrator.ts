@@ -88,7 +88,7 @@ export async function runPipeline(config: PipelineConfig, opts: RunOptions): Pro
   // 3. Resolve AI backends
   const backends = await resolveBackends(config.ai.backends)
   if (backends.length === 0) {
-    throw new Error('No AI backends available. Install the claude, gemini, or qwen CLI and try again.')
+    throw new Error('No AI backends available. Install the claude, gemini, qwen, or codex CLI and try again.')
   }
 
   // 4. Load dedup state

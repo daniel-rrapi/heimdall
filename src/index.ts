@@ -16,7 +16,7 @@ async function main() {
     .option('exclude', { type: 'string', description: 'Comma-separated glob patterns to exclude (replaces the defaults)' })
     .option('include-extra', { type: 'string', description: 'Comma-separated globs to ADD to the default include set' })
     .option('exclude-extra', { type: 'string', description: 'Comma-separated globs to ADD to the default exclusions' })
-    .option('backends', { type: 'string', description: 'Comma-separated AI backend names (claude,gemini,qwen)' })
+    .option('backends', { type: 'string', description: 'Comma-separated AI backend names (claude,gemini,qwen,codex)' })
     .option('categories', { type: 'string', description: 'Comma-separated vulnerability categories' })
     .option('concurrency', { type: 'number', description: 'Override per-backend concurrency (applies to all)' })
     .option('output-dir', { type: 'string', description: 'Override output directory for reports' })
