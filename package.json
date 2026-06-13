@@ -1,7 +1,7 @@
 {
   "name": "heimdall-cli",
-  "version": "1.0.0",
-  "description": "AI-powered security scanner for any codebase, using local AI CLI backends (Claude, Gemini, Qwen)",
+  "version": "0.1.0",
+  "description": "AI-powered security scanner for any codebase, using local AI CLI backends (Claude, Gemini, Codex, Opencode, Qwen)",
   "license": "MIT",
   "author": "Daniel Rrapi",
   "keywords": [

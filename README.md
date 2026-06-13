@@ -99,9 +99,6 @@ heimdall scan --path ./my-app --categories injection,secrets,idor
 
 # Re-generate Markdown/SARIF from the most recent JSON report (no AI calls)
 heimdall report
-
-# Clear the deduplication state and start fresh
-npm run reset-state
 ```
 
 Running from the source tree instead of the installed CLI? Use the npm scripts —
@@ -147,11 +144,11 @@ The server exposes three read-only JSON endpoints:
 Heimdall uses explicit subcommands — running `heimdall` on its own (or with an
 unknown command/flag) prints help and exits instead of scanning.
 
-| Command           | Description                                                                  |
-| ----------------- | ---------------------------------------------------------------------------- |
-| `heimdall scan`   | Scan a codebase for security vulnerabilities (see flags below)               |
-| `heimdall report` | Re-generate Markdown/SARIF from the most recent JSON scan, without AI calls  |
-| `heimdall web`    | Start the local web dashboard at http://localhost:4040                       |
+| Command           | Description                                                                 |
+| ----------------- | --------------------------------------------------------------------------- |
+| `heimdall scan`   | Scan a codebase for security vulnerabilities (see flags below)              |
+| `heimdall report` | Re-generate Markdown/SARIF from the most recent JSON scan, without AI calls |
+| `heimdall web`    | Start the local web dashboard at http://localhost:4040                      |
 
 Run `heimdall <command> --help` to see a command's flags.
 
@@ -398,7 +395,7 @@ contributors and AI coding agents.
 
 ## TODO
 
-- Add docker / script for installation
+- Proper error handling of AI code tools
 - Change between AI models from the same backend
 - Add scan from commit diff
 - Add AI SDK for CI/CD compability
