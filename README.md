@@ -2,7 +2,7 @@
 
 <img width="1365" height="768" alt="heimdall" src="https://github.com/user-attachments/assets/5c555ed9-034f-4507-a230-dc76633a454b" />
 
-> In Norse mythology, *Heimdall* is the all-seeing, all-hearing Guardian of Asgard.
+> In Norse mythology, _Heimdall_ is the all-seeing, all-hearing Guardian of Asgard.
 
 AI-powered security scanner for **any codebase**. Heimdall walks your source
 files, sends each one to one or more locally-installed AI CLIs (Claude, Gemini, Codex, Qwen, OpenCode), and aggregates their findings into structured, deduplicated reports
@@ -26,7 +26,7 @@ https://github.com/user-attachments/assets/68a77957-d472-4254-959f-35b76b116adc
 ## ☑️ Prerequisites
 
 - Node.js 18+
-- OPTIONAL: Git (for cloning the source code, you can also download it as a ZIP from Github)
+- Git
 - At least one of the following AI CLIs installed and authenticated:
   - [Claude Code](https://claude.com/claude-code) — `claude`
   - [Gemini CLI](https://github.com/google-gemini/gemini-cli) — `gemini`
@@ -39,7 +39,7 @@ installed are skipped with a warning instead of failing the run.
 
 ## 🛠️ Install
 
-**Option A — one-line install (macOS / Linux, no clone needed):**
+**Option A — one-line install (macOS / Linux):**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/daniel-rrapi/heimdall/main/install.sh | bash
@@ -50,30 +50,24 @@ command into `~/.local/bin` (no sudo, adds it to your PATH if needed). **Re-run
 the same command to update.** Override the location/branch with the
 `HEIMDALL_HOME` / `HEIMDALL_REF` env vars.
 
-> Piping a remote script to `bash` runs code from the internet. To inspect it
-> first: `curl -fsSL <url> -o install.sh && less install.sh && bash install.sh`.
-
 Then use it from any directory (open a new terminal first if PATH was updated):
 
 ```bash
-heimdall --path ../my-app --backends codex
+heimdall scan --path ../my-app --backends codex
 heimdall web          # local dashboard at http://localhost:4040
 ```
 
 Uninstall: `~/.heimdall/install.sh --uninstall`.
 
-**Option B — from a clone (global CLI):**
+**Option B — run from the source:**
 
 ```bash
 git clone https://github.com/daniel-rrapi/heimdall.git
+
 cd heimdall
-./install.sh          # or: npm run install:cli
-```
 
-**Option C — run from the repo (no install):**
-
-```bash
 npm install
+
 npm run build         # optional; only needed for the compiled binary / dashboard
 ```
 
@@ -83,31 +77,32 @@ Run it via the npm scripts (which use `tsx`) — see Quick start below.
 
 ```bash
 # See which files would be scanned, without calling any AI
-npm run scan:dry-run -- --path ../my-app
+heimdall scan --dry-run --path ./my-app # if installed via script
+# or
+npm run scan:dry-run -- --path ../my-app # if using from the source
 
 # Scan a project (default backend: claude)
-npm run scan -- --path ../my-app
-
-# Scan the current directory
-npm run scan -- --path .
+heimdall scan --path ./my-app # if installed via script
+# or
+npm run scan -- --path ./my-app # if using from the source
 
 # Use several backends in parallel (findings are merged)
+heimdall scan --path ./my-app --backends claude,gemini
+# or
 npm run scan -- --path ../my-app --backends claude,gemini
 
 # Only a subset of categories
+heimdall scan --path ./my-app --categories injection,secrets,idor
+# or
 npm run scan -- --path ../my-app --categories injection,secrets,idor
 
 # Re-generate Markdown/SARIF from the most recent JSON report (no AI calls)
+heimdall report
+# or
 npm run report:last
 
 # Clear the deduplication state and start fresh
 npm run reset-state
-```
-
-After `npm run build`, the same thing as a binary:
-
-```bash
-heimdall --path ../my-app --backends claude,gemini
 ```
 
 ## 🌐 Web dashboard
@@ -144,7 +139,23 @@ The server exposes three read-only JSON endpoints:
 | `GET /api/reports`           | List of past scans (metadata only) |
 | `GET /api/reports/:filename` | Full report JSON                   |
 
+## Commands
+
+Heimdall uses explicit subcommands — running `heimdall` on its own (or with an
+unknown command/flag) prints help and exits instead of scanning.
+
+| Command           | Description                                                                  |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `heimdall scan`   | Scan a codebase for security vulnerabilities (see flags below)               |
+| `heimdall report` | Re-generate Markdown/SARIF from the most recent JSON scan, without AI calls  |
+| `heimdall web`    | Start the local web dashboard at http://localhost:4040                       |
+
+Run `heimdall <command> --help` to see a command's flags.
+
 ## CLI options
+
+The flags below apply to `heimdall scan`. (`--config` / `--output-dir` are also
+accepted by `heimdall report`.)
 
 | Flag              | Type      | Description                                                                           |
 | ----------------- | --------- | ------------------------------------------------------------------------------------- |
@@ -159,7 +170,6 @@ The server exposes three read-only JSON endpoints:
 | `--output-dir`    | `string`  | Output directory for reports                                                          |
 | `--config`        | `string`  | Path to a config file (default: `./config.yaml`)                                      |
 | `--dry-run`       | `boolean` | List the files that would be scanned, without calling any AI                          |
-| `--report-only`   | `boolean` | Re-generate reports from the last JSON scan without new AI calls                      |
 | `--no-dedup`      | `boolean` | Ignore the state DB and treat every finding as new                                    |
 
 ## Configuration

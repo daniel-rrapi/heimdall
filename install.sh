@@ -157,9 +157,9 @@ cat <<EOF
 
   ${BOLD}Try it:${RST}
     heimdall --help
-    heimdall --dry-run --path .          ${DIM}# list files, no AI calls${RST}
-    heimdall --path . --backends codex   ${DIM}# full scan${RST}
-    heimdall web                         ${DIM}# dashboard at http://localhost:4040${RST}
+    heimdall scan --dry-run --path .          ${DIM}# list files, no AI calls${RST}
+    heimdall scan --path . --backends codex   ${DIM}# full scan${RST}
+    heimdall web                              ${DIM}# dashboard at http://localhost:4040${RST}
 
   ${DIM}Source: ${REPO_DIR}
   Update: re-run the installer  ·  Uninstall: ${REPO_DIR}/install.sh --uninstall${RST}

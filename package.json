@@ -30,9 +30,9 @@
     "node": ">=18"
   },
   "scripts": {
-    "scan": "tsx src/index.ts",
-    "scan:dry-run": "tsx src/index.ts --dry-run",
-    "report:last": "tsx src/index.ts --report-only",
+    "scan": "tsx src/index.ts scan",
+    "scan:dry-run": "tsx src/index.ts scan --dry-run",
+    "report:last": "tsx src/index.ts report",
     "reset-state": "rm -f \"${HEIMDALL_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/heimdall}/state.db\"",
     "web": "tsx web/server.ts",
     "build": "tsc && tsc -p tsconfig.web.json && node -e \"const fs=require('fs');fs.mkdirSync('dist/web',{recursive:true});fs.copyFileSync('web/index.html','dist/web/index.html')\"",

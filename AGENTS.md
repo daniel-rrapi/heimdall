@@ -71,7 +71,7 @@ CLI (index.ts)
 
 | Path                       | Responsibility |
 | -------------------------- | -------------- |
-| `src/index.ts`             | CLI parsing (yargs), `--report-only` shortcut, kicks off the run. The `web` subcommand spawns the compiled dashboard (`dist/web/server.js`). Has a `#!/usr/bin/env node` shebang (keep it first line — it's the `bin`). |
+| `src/index.ts`             | CLI parsing (yargs) in `strict` mode with a required subcommand: `scan` (kicks off the run), `report` (regenerate md/sarif from the latest JSON, no AI), and `web` (spawns the compiled dashboard `dist/web/server.js`). Unknown commands/flags or a bare invocation error out instead of scanning. Has a `#!/usr/bin/env node` shebang (keep it first line — it's the `bin`). |
 | `web/`                     | `server.ts` (zero-`src` deps: only Node built-ins + `js-yaml`) + `index.html`. Built by `tsconfig.web.json` → `dist/web/` (the `build` script also copies `index.html`, which `server.ts` reads via `__dirname`). |
 | `src/config/`              | `types.ts` defines `PipelineConfig`, `DEFAULT_CONFIG`, and the default include/exclude/manifest lists + `BUILTIN_CATEGORIES`. `loader.ts` reads `config.yaml`/`config.local.yaml` from cwd, deep-merges, and applies CLI overrides. |
 | `src/discovery/`           | `projectDiscovery.ts` resolves `target.roots` into `ProjectMeta` (name = dir basename). `fileCollector.ts` globs each project for source files (+ manifests when `dependency` is enabled), detects language from the extension. `types.ts` holds `ProjectMeta`, `ScanTarget`, `FileType`. |
@@ -101,8 +101,8 @@ CLI (index.ts)
   `src/ai/prompts/buildPrompt.ts` and add the name to `BUILTIN_CATEGORIES` in
   `src/config/types.ts` (and to `config.yaml`).
 - **Add a report format:** extend the `ReportFormat` union, write a reporter in
-  `src/report/`, and wire it into `orchestrator.ts` (and the `report-only`
-  branch in `index.ts`).
+  `src/report/`, and wire it into `orchestrator.ts` (and the `report` command
+  handler in `index.ts`).
 - **Change what gets discovered:** tune `DEFAULT_INCLUDE` / `DEFAULT_EXCLUDE` /
   `DEFAULT_MANIFEST_FILES` in `config/types.ts`. Per run, `include` / `exclude`
   (config or `--include` / `--exclude`) **replace** those defaults, while
