@@ -78,7 +78,7 @@ function listReportMeta(): unknown[] {
           completedAt?: string
           statistics?: unknown
           notes?: unknown
-          config?: { ai?: { backends?: string[] } }
+          config?: { ai?: { backends?: string[] }; target?: { roots?: string[] } }
         }
         return {
           filename,
@@ -88,6 +88,7 @@ function listReportMeta(): unknown[] {
           statistics: report.statistics,
           notes: report.notes,
           backends: report.config?.ai?.backends ?? [],
+          roots: report.config?.target?.roots ?? [],
         }
       } catch {
         return { filename, error: 'Could not parse report' }

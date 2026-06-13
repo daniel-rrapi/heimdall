@@ -1,430 +1,584 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heimdall</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Heimdall</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    :root {
-      --bg:       #0d0f12;
-      --surface:  #161a1f;
-      --border:   #262b32;
-      --muted:    #4a5360;
-      --text:     #c9d1dc;
-      --heading:  #eef0f3;
-      --accent:   #5b8ef0;
+      /* ── palette: neutral — white on black ─────────────────── */
+      :root {
+        --bg: #000000;
+        --surface: rgba(255, 255, 255, 0.04);
+        --surface-2: rgba(255, 255, 255, 0.07);
+        --border: rgba(255, 255, 255, 0.12);
+        --border-hi: rgba(255, 255, 255, 0.28);
 
-      --critical: #e05c5c;
-      --high:     #e08b3a;
-      --medium:   #d4c250;
-      --low:      #6bba6b;
-      --info:     #6fa8d4;
-    }
+        --text: rgba(255, 255, 255, 0.78);
+        --heading: #ffffff;
+        --muted: rgba(255, 255, 255, 0.45);
+        --accent: #ffffff;
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: ui-monospace, 'Cascadia Code', 'JetBrains Mono', monospace;
-      font-size: 13px;
-      line-height: 1.6;
-    }
+        /* glass surface for buttons & framed panels */
+        --glass: rgba(255, 255, 255, 0.08);
+        --glass-hi: rgba(255, 255, 255, 0.16);
 
-    /* ── layout ──────────────────────────────────────────── */
+        --critical: #ff6b6b;
+        --high: #ffa94d;
+        --medium: #ffd43b;
+        --low: #69db7c;
+        --info: #74c0fc;
+      }
 
-    #app {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 24px 64px;
-    }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: ui-monospace, "Cascadia Code", "JetBrains Mono", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+      }
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 32px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
+      /* ── layout ──────────────────────────────────────────── */
+      #app {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 24px 64px;
+      }
 
-    header h1 {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--heading);
-      letter-spacing: .03em;
-    }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+      }
 
-    header h1 span { color: var(--accent); }
+      header h1 {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--heading);
+        letter-spacing: 0.03em;
+      }
+      header h1 span {
+        color: var(--muted);
+      }
 
-    .section { margin-bottom: 36px; }
+      .section {
+        margin-bottom: 36px;
+      }
 
-    .section-title {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
+      .section-title {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
 
-    /* ── cards ───────────────────────────────────────────── */
+      /* ── cards ───────────────────────────────────────────── */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px 20px;
+      }
+      .card + .card {
+        margin-top: 10px;
+      }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 16px 20px;
-    }
+      /* ── config display ──────────────────────────────────── */
+      .config-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 10px;
+      }
 
-    .card + .card { margin-top: 10px; }
+      .config-item label {
+        display: block;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
 
-    /* ── config display ──────────────────────────────────── */
+      .config-item .val {
+        color: var(--heading);
+        word-break: break-all;
+      }
 
-    .config-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 10px;
-    }
+      .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
 
-    .config-item label {
-      display: block;
-      font-size: 10px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
+      .tag {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 2px 7px;
+        font-size: 11px;
+        color: var(--text);
+      }
 
-    .config-item .val {
-      color: var(--heading);
-      word-break: break-all;
-    }
+      /* ── report row ──────────────────────────────────────── */
+      .report-row {
+        cursor: pointer;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: start;
+        border-radius: 8px;
+        padding: 14px 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        transition:
+          border-color 0.12s,
+          background 0.12s;
+        margin-bottom: 8px;
+      }
+      .report-row:hover {
+        border-color: var(--border-hi);
+        background: var(--surface-2);
+      }
+      .report-row.active {
+        border-color: var(--accent);
+        background: var(--surface-2);
+      }
 
-    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
+      .report-date {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
 
-    .tag {
-      background: var(--border);
-      border-radius: 3px;
-      padding: 2px 7px;
-      font-size: 11px;
-      color: var(--text);
-    }
+      .report-title {
+        font-size: 13px;
+        color: var(--heading);
+        margin-bottom: 5px;
+      }
 
-    /* ── report row ──────────────────────────────────────── */
+      .report-scope {
+        font-size: 11px;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .report-scope .glyph {
+        color: var(--muted);
+        margin-right: 5px;
+      }
 
-    .report-row {
-      cursor: pointer;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      align-items: start;
-      border-radius: 6px;
-      padding: 14px 18px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      transition: border-color .12s;
-      margin-bottom: 8px;
-    }
+      .sev-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
 
-    .report-row:hover { border-color: var(--accent); }
-    .report-row.active { border-color: var(--accent); background: #131820; }
+      .pill {
+        border-radius: 4px;
+        padding: 1px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+      }
+      .pill.critical {
+        color: var(--critical);
+      }
+      .pill.high {
+        color: var(--high);
+      }
+      .pill.medium {
+        color: var(--medium);
+      }
+      .pill.low {
+        color: var(--low);
+      }
+      .pill.info {
+        color: var(--info);
+      }
 
-    .report-date {
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
+      .report-meta {
+        text-align: right;
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
 
-    .report-title {
-      font-size: 13px;
-      color: var(--heading);
-      margin-bottom: 8px;
-    }
+      /* ── findings panel ──────────────────────────────────── */
+      #findings-panel {
+        display: none;
+        margin-top: 32px;
+      }
 
-    .sev-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+      .findings-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        gap: 16px;
+      }
+      .findings-header h2 {
+        font-size: 15px;
+        color: var(--heading);
+      }
 
-    .pill {
-      border-radius: 3px;
-      padding: 1px 8px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .pill.critical { background: #3a1515; color: var(--critical); }
-    .pill.high     { background: #3a2210; color: var(--high); }
-    .pill.medium   { background: #33300a; color: var(--medium); }
-    .pill.low      { background: #0d2e0d; color: var(--low); }
-    .pill.info     { background: #0e2030; color: var(--info); }
+      .findings-scope {
+        font-size: 12px;
+        color: var(--text);
+        margin-top: 5px;
+      }
+      .findings-scope .glyph {
+        color: var(--muted);
+        margin-right: 5px;
+      }
+      .findings-scope strong {
+        color: var(--heading);
+      }
+      .findings-scope .projects {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 11px;
+      }
 
-    .report-meta { text-align: right; font-size: 11px; color: var(--muted); line-height: 1.8; }
+      .findings-stats {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
 
-    /* ── findings panel ──────────────────────────────────── */
+      .stat-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 18px;
+        text-align: center;
+        min-width: 90px;
+      }
 
-    #findings-panel { display: none; margin-top: 32px; }
+      .stat-box .stat-num {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--heading);
+        display: block;
+      }
 
-    .findings-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
+      .stat-box .stat-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
 
-    .findings-header h2 { font-size: 15px; color: var(--heading); }
+      .severity-group {
+        margin-bottom: 28px;
+      }
 
-    .findings-stats {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
+      .severity-group-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--border);
+      }
+      .severity-group-title .swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        display: inline-block;
+      }
 
-    .stat-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 18px;
-      text-align: center;
-      min-width: 90px;
-    }
+      .finding-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left-width: 3px;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin-bottom: 8px;
+      }
+      .finding-card.critical {
+        border-left-color: var(--critical);
+      }
+      .finding-card.high {
+        border-left-color: var(--high);
+      }
+      .finding-card.medium {
+        border-left-color: var(--medium);
+      }
+      .finding-card.low {
+        border-left-color: var(--low);
+      }
+      .finding-card.info {
+        border-left-color: var(--info);
+      }
 
-    .stat-box .stat-num {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--heading);
-      display: block;
-    }
+      .finding-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--heading);
+        margin-bottom: 6px;
+      }
 
-    .stat-box .stat-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--muted);
-    }
+      .finding-meta {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 8px;
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .finding-meta span {
+        white-space: nowrap;
+      }
+      .finding-meta .k {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin-right: 4px;
+      }
+      .finding-meta .v {
+        color: var(--text);
+      }
 
-    .severity-group { margin-bottom: 28px; }
+      .finding-body p {
+        margin-bottom: 6px;
+        font-size: 12px;
+      }
+      .finding-body strong {
+        color: var(--heading);
+      }
 
-    .severity-group-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border);
-    }
+      details {
+        margin-top: 10px;
+      }
+      details summary {
+        cursor: pointer;
+        font-size: 11px;
+        color: var(--heading);
+        list-style: none;
+        user-select: none;
+      }
+      details summary::-webkit-details-marker {
+        display: none;
+      }
 
-    .finding-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left-width: 3px;
-      border-radius: 0 6px 6px 0;
-      padding: 14px 18px;
-      margin-bottom: 8px;
-    }
+      pre {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin-top: 8px;
+        overflow-x: auto;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--text);
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
 
-    .finding-card.critical { border-left-color: var(--critical); }
-    .finding-card.high     { border-left-color: var(--high); }
-    .finding-card.medium   { border-left-color: var(--medium); }
-    .finding-card.low      { border-left-color: var(--low); }
-    .finding-card.info     { border-left-color: var(--info); }
+      /* ── buttons: frosted glass ──────────────────────────── */
+      button {
+        background: var(--glass);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border-hi);
+        color: var(--heading);
+        border-radius: 8px;
+        padding: 7px 16px;
+        font-family: inherit;
+        font-size: 12px;
+        letter-spacing: 0.03em;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      button:hover {
+        background: var(--glass-hi);
+        border-color: var(--accent);
+      }
 
-    .finding-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--heading);
-      margin-bottom: 6px;
-    }
+      .empty {
+        color: var(--muted);
+        font-size: 12px;
+        padding: 12px 0;
+      }
 
-    .finding-meta {
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 8px;
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
+      .badge-new {
+        background: var(--glass-hi);
+        color: var(--heading);
+        border: 1px solid var(--border-hi);
+        border-radius: 4px;
+        padding: 1px 7px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+      }
 
-    .finding-meta span { white-space: nowrap; }
+      .confidence {
+        font-size: 10px;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 6px;
+      }
 
-    .finding-body p { margin-bottom: 6px; font-size: 12px; }
+      #error-banner {
+        display: none;
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid var(--critical);
+        color: var(--critical);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1><span>🔱</span> Heimdall</h1>
+        <button id="btn-refresh">↺ Refresh</button>
+      </header>
 
-    .finding-body strong { color: var(--text); }
+      <div id="error-banner"></div>
 
-    details { margin-top: 10px; }
+      <!-- CONFIG ───────────────────────────────────────────── -->
+      <section class="section">
+        <div class="section-title">Configuration</div>
+        <div id="config-area"><div class="empty">Loading…</div></div>
+      </section>
 
-    details summary {
-      cursor: pointer;
-      font-size: 11px;
-      color: var(--accent);
-      list-style: none;
-      user-select: none;
-    }
+      <!-- REPORTS ──────────────────────────────────────────── -->
+      <section class="section">
+        <div class="section-title">Past scans</div>
+        <div id="reports-area"><div class="empty">Loading…</div></div>
+      </section>
 
-    details summary::-webkit-details-marker { display: none; }
-
-    pre {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 10px 14px;
-      margin-top: 8px;
-      overflow-x: auto;
-      font-size: 12px;
-      line-height: 1.5;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    /* ── misc ────────────────────────────────────────────── */
-
-    button {
-      background: var(--border);
-      border: 1px solid var(--muted);
-      color: var(--text);
-      border-radius: 4px;
-      padding: 5px 14px;
-      font-family: inherit;
-      font-size: 12px;
-      cursor: pointer;
-      transition: border-color .12s;
-    }
-
-    button:hover { border-color: var(--accent); color: var(--heading); }
-
-    .empty { color: var(--muted); font-size: 12px; padding: 12px 0; }
-
-    .badge-new {
-      background: #0d2e0d;
-      color: var(--low);
-      border-radius: 3px;
-      padding: 1px 7px;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .05em;
-    }
-
-    .confidence {
-      font-size: 10px;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 1px 6px;
-    }
-
-    #error-banner {
-      display: none;
-      background: #2a1010;
-      border: 1px solid var(--critical);
-      color: var(--critical);
-      border-radius: 6px;
-      padding: 12px 16px;
-      margin-bottom: 20px;
-      font-size: 12px;
-    }
-  </style>
-</head>
-<body>
-<div id="app">
-
-  <header>
-    <h1><span>//</span> Heimdall</h1>
-    <button id="btn-refresh">↺ Refresh</button>
-  </header>
-
-  <div id="error-banner"></div>
-
-  <!-- CONFIG ───────────────────────────────────────────── -->
-  <section class="section">
-    <div class="section-title">Configuration</div>
-    <div id="config-area"><div class="empty">Loading…</div></div>
-  </section>
-
-  <!-- REPORTS ──────────────────────────────────────────── -->
-  <section class="section">
-    <div class="section-title">Past scans</div>
-    <div id="reports-area"><div class="empty">Loading…</div></div>
-  </section>
-
-  <!-- FINDINGS ─────────────────────────────────────────── -->
-  <section id="findings-panel" class="section">
-    <div class="findings-header">
-      <h2 id="findings-title">Findings</h2>
-      <button id="btn-close-findings">✕ Close</button>
+      <!-- FINDINGS ─────────────────────────────────────────── -->
+      <section id="findings-panel" class="section">
+        <div class="findings-header">
+          <div>
+            <h2 id="findings-title">Findings</h2>
+            <div id="findings-scope" class="findings-scope"></div>
+          </div>
+          <button id="btn-close-findings">✕ Close</button>
+        </div>
+        <div id="findings-stats" class="findings-stats"></div>
+        <div id="findings-area"></div>
+      </section>
     </div>
-    <div id="findings-stats" class="findings-stats"></div>
-    <div id="findings-area"></div>
-  </section>
 
-</div>
+    <script>
+      const API = ""; // same origin — empty string means relative URLs
 
-<script>
-const API = ''  // same origin — empty string means relative URLs
+      // ── utils ────────────────────────────────────────────────
 
-// ── utils ────────────────────────────────────────────────
+      const SEV_LABEL = {
+        critical: "CRITICAL",
+        high: "HIGH",
+        medium: "MEDIUM",
+        low: "LOW",
+        info: "INFO",
+      };
 
-function fmt(iso) {
-  if (!iso) return '—'
-  const d = new Date(iso)
-  return d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
-}
+      function fmt(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        return d.toLocaleString("en-US", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        });
+      }
 
-function sev(s) {
-  return { critical: '🔴 CRITICAL', high: '🟠 HIGH', medium: '🟡 MEDIUM', low: '🟢 LOW', info: '🔵 INFO' }[s] ?? s?.toUpperCase()
-}
+      function sev(s) {
+        return SEV_LABEL[s] ?? s?.toUpperCase() ?? "";
+      }
 
-function sevColor(s) {
-  return { critical: 'var(--critical)', high: 'var(--high)', medium: 'var(--medium)', low: 'var(--low)', info: 'var(--info)' }[s] ?? 'var(--text)'
-}
+      function sevColor(s) {
+        return (
+          {
+            critical: "var(--critical)",
+            high: "var(--high)",
+            medium: "var(--medium)",
+            low: "var(--low)",
+            info: "var(--info)",
+          }[s] ?? "var(--text)"
+        );
+      }
 
-function tag(text) {
-  return `<span class="tag">${text}</span>`
-}
+      function tag(text) {
+        return `<span class="tag">${escHtml(text)}</span>`;
+      }
 
-function pill(severity, count) {
-  if (!count) return ''
-  return `<span class="pill ${severity}">${sev(severity).split(' ')[1] ?? severity} ${count}</span>`
-}
+      function pill(severity, count) {
+        if (!count) return "";
+        return `<span class="pill ${severity}">${SEV_LABEL[severity] ?? severity} ${count}</span>`;
+      }
 
-function showError(msg) {
-  const el = document.getElementById('error-banner')
-  el.textContent = msg
-  el.style.display = 'block'
-}
+      // human-friendly description of where a scan ran
+      function scopeLabel(roots) {
+        const list = [roots ?? ["."]].flat().filter(Boolean);
+        if (list.length === 0) return ".";
+        return list
+          .map((r) => (r === "." ? "./ (current directory)" : r))
+          .join(", ");
+      }
 
-function hideError() {
-  document.getElementById('error-banner').style.display = 'none'
-}
+      function showError(msg) {
+        const el = document.getElementById("error-banner");
+        el.textContent = msg;
+        el.style.display = "block";
+      }
 
-// ── config ───────────────────────────────────────────────
+      function hideError() {
+        document.getElementById("error-banner").style.display = "none";
+      }
 
-async function loadConfig() {
-  const area = document.getElementById('config-area')
-  try {
-    const res = await fetch(`${API}/api/config`)
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    const cfg = await res.json()
-    const t = cfg.target ?? {}
-    const ai = cfg.ai ?? {}
-    const scan = cfg.scan ?? {}
-    const out = cfg.output ?? {}
+      // ── config ───────────────────────────────────────────────
 
-    const roots = [t.roots ?? ['.']].flat()
-    const backends = [ai.backends ?? ['claude']].flat()
-    const cats = [scan.categories ?? []].flat()
-    const formats = [out.formats ?? ['json', 'markdown']].flat()
+      async function loadConfig() {
+        const area = document.getElementById("config-area");
+        try {
+          const res = await fetch(`${API}/api/config`);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const cfg = await res.json();
+          const t = cfg.target ?? {};
+          const ai = cfg.ai ?? {};
+          const scan = cfg.scan ?? {};
+          const out = cfg.output ?? {};
 
-    area.innerHTML = `<div class="card config-grid">
-      <div class="config-item">
-        <label>Scan roots</label>
-        <div class="val tag-list">${roots.map(tag).join('')}</div>
+          const roots = [t.roots ?? ["."]].flat();
+          const backends = [ai.backends ?? ["claude"]].flat();
+          const cats = [scan.categories ?? []].flat();
+          const formats = [out.formats ?? ["json", "markdown"]].flat();
+
+          area.innerHTML = `<div class="card config-grid">
+      <div class="config-item" style="grid-column: 1 / -1">
+        <label>Scan folder</label>
+        <div class="val tag-list">${roots.map(tag).join("")}</div>
       </div>
       <div class="config-item">
         <label>AI backends</label>
-        <div class="val tag-list">${backends.map(tag).join('')}</div>
+        <div class="val tag-list">${backends.map(tag).join("")}</div>
       </div>
       <div class="config-item">
         <label>Chunk size</label>
@@ -432,11 +586,11 @@ async function loadConfig() {
       </div>
       <div class="config-item">
         <label>Output formats</label>
-        <div class="val tag-list">${formats.map(tag).join('')}</div>
+        <div class="val tag-list">${formats.map(tag).join("")}</div>
       </div>
       <div class="config-item">
         <label>Reports dir</label>
-        <div class="val">${out.reportsDir ?? '(default)'}</div>
+        <div class="val">${escHtml(out.reportsDir ?? "(default)")}</div>
       </div>
       <div class="config-item">
         <label>Timeout</label>
@@ -444,180 +598,209 @@ async function loadConfig() {
       </div>
       <div class="config-item" style="grid-column: 1 / -1">
         <label>Categories (${cats.length})</label>
-        <div class="val tag-list">${cats.map(tag).join('')}</div>
+        <div class="val tag-list">${cats.map(tag).join("")}</div>
       </div>
-    </div>`
-  } catch (err) {
-    area.innerHTML = `<div class="empty">Could not load config: ${err.message}</div>`
-    showError(`Could not reach API server. Make sure 'npm run web' is running. (${err.message})`)
-  }
-}
+    </div>`;
+        } catch (err) {
+          area.innerHTML = `<div class="empty">Could not load config: ${err.message}</div>`;
+          showError(
+            `Could not reach API server. Make sure 'npm run web' is running. (${err.message})`,
+          );
+        }
+      }
 
-// ── reports ──────────────────────────────────────────────
+      // ── reports ──────────────────────────────────────────────
 
-let activeReport = null
+      let activeReport = null;
 
-async function loadReports() {
-  const area = document.getElementById('reports-area')
-  try {
-    const res = await fetch(`${API}/api/reports`)
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    const reports = await res.json()
+      async function loadReports() {
+        const area = document.getElementById("reports-area");
+        try {
+          const res = await fetch(`${API}/api/reports`);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const reports = await res.json();
 
-    if (reports.length === 0) {
-      area.innerHTML = `<div class="empty">No reports yet. Run <code>npm run scan</code> to generate one.</div>`
-      return
-    }
+          if (reports.length === 0) {
+            area.innerHTML = `<div class="empty">No reports yet. Run <code>npm run scan</code> to generate one.</div>`;
+            return;
+          }
 
-    area.innerHTML = reports.map((r, i) => {
-      const stats = r.statistics ?? {}
-      const bySev = stats.findingsBySeverity ?? {}
-      const pills = ['critical', 'high', 'medium', 'low', 'info']
-        .map(s => pill(s, bySev[s]))
-        .filter(Boolean)
-        .join('')
+          area.innerHTML = reports
+            .map((r, i) => {
+              const stats = r.statistics ?? {};
+              const bySev = stats.findingsBySeverity ?? {};
+              const pills = ["critical", "high", "medium", "low", "info"]
+                .map((s) => pill(s, bySev[s]))
+                .filter(Boolean)
+                .join("");
 
-      return `<div class="report-row" data-filename="${r.filename}" data-index="${i}">
+              return `<div class="report-row" data-filename="${r.filename}" data-index="${i}">
         <div>
           <div class="report-date">${fmt(r.startedAt)}</div>
-          <div class="report-title">${r.filename}</div>
+          <div class="report-title">${escHtml(r.filename)}</div>
+          <div class="report-scope"><span class="glyph">⌖</span>${escHtml(scopeLabel(r.roots))}</div>
           <div class="sev-pills">${pills || '<span class="tag">0 findings</span>'}</div>
         </div>
         <div class="report-meta">
-          <div>${stats.projectsScanned ?? 0} project${stats.projectsScanned === 1 ? '' : 's'}</div>
+          <div>${stats.projectsScanned ?? 0} project${stats.projectsScanned === 1 ? "" : "s"}</div>
           <div>${stats.filesScanned ?? 0} files</div>
           <div>${stats.findingsNew ?? 0} new / ${stats.findingsTotal ?? 0} total</div>
-          <div>${(r.backends ?? []).join(', ') || '—'}</div>
+          <div>${escHtml((r.backends ?? []).join(", ") || "—")}</div>
         </div>
-      </div>`
-    }).join('')
+      </div>`;
+            })
+            .join("");
 
-    area.querySelectorAll('.report-row').forEach(row => {
-      row.addEventListener('click', () => {
-        area.querySelectorAll('.report-row').forEach(r => r.classList.remove('active'))
-        row.classList.add('active')
-        loadFindings(row.dataset.filename)
-      })
-    })
+          area.querySelectorAll(".report-row").forEach((row) => {
+            row.addEventListener("click", () => {
+              area
+                .querySelectorAll(".report-row")
+                .forEach((r) => r.classList.remove("active"));
+              row.classList.add("active");
+              loadFindings(row.dataset.filename);
+            });
+          });
+        } catch (err) {
+          area.innerHTML = `<div class="empty">Could not load reports: ${err.message}</div>`;
+        }
+      }
 
-  } catch (err) {
-    area.innerHTML = `<div class="empty">Could not load reports: ${err.message}</div>`
-  }
-}
+      // ── findings ─────────────────────────────────────────────
 
-// ── findings ─────────────────────────────────────────────
+      async function loadFindings(filename) {
+        const panel = document.getElementById("findings-panel");
+        const area = document.getElementById("findings-area");
+        const title = document.getElementById("findings-title");
+        const scope = document.getElementById("findings-scope");
+        const stats = document.getElementById("findings-stats");
 
-async function loadFindings(filename) {
-  const panel = document.getElementById('findings-panel')
-  const area  = document.getElementById('findings-area')
-  const title = document.getElementById('findings-title')
-  const stats = document.getElementById('findings-stats')
+        panel.style.display = "block";
+        area.innerHTML = '<div class="empty">Loading…</div>';
+        title.textContent = filename;
+        scope.innerHTML = "";
 
-  panel.style.display = 'block'
-  area.innerHTML = '<div class="empty">Loading…</div>'
-  title.textContent = filename
+        try {
+          const res = await fetch(
+            `${API}/api/reports/${encodeURIComponent(filename)}`,
+          );
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const report = await res.json();
 
-  try {
-    const res = await fetch(`${API}/api/reports/${encodeURIComponent(filename)}`)
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    const report = await res.json()
+          const st = report.statistics ?? {};
 
-    const st = report.statistics ?? {}
+          // where was this scan run?
+          const roots = report.config?.target?.roots;
+          const projects = Object.keys(st.findingsByProject ?? {});
+          scope.innerHTML =
+            `<span class="glyph">⌖</span>Scanned folder: <strong>${escHtml(scopeLabel(roots))}</strong>` +
+            (projects.length
+              ? `<span class="projects">Projects: ${projects.map(escHtml).join(" · ")}</span>`
+              : "");
 
-    // stat boxes
-    stats.innerHTML = [
-      { num: st.findingsTotal ?? 0,   label: 'Total' },
-      { num: st.findingsNew ?? 0,     label: 'New' },
-      { num: st.filesScanned ?? 0,    label: 'Files' },
-      { num: st.aiCallsTotal ?? 0,    label: 'AI calls' },
-    ].map(({ num, label }) => `<div class="stat-box">
+          // stat boxes
+          stats.innerHTML = [
+            { num: st.findingsTotal ?? 0, label: "Total" },
+            { num: st.findingsNew ?? 0, label: "New" },
+            { num: st.filesScanned ?? 0, label: "Files" },
+            { num: st.aiCallsTotal ?? 0, label: "AI calls" },
+          ]
+            .map(
+              ({ num, label }) => `<div class="stat-box">
       <span class="stat-num">${num}</span>
       <span class="stat-label">${label}</span>
-    </div>`).join('')
+    </div>`,
+            )
+            .join("");
 
-    const findings = report.findings ?? []
+          const findings = report.findings ?? [];
 
-    if (findings.length === 0) {
-      area.innerHTML = '<div class="empty">No findings in this scan.</div>'
-      return
-    }
+          if (findings.length === 0) {
+            area.innerHTML =
+              '<div class="empty">No findings in this scan.</div>';
+            return;
+          }
 
-    // group by severity
-    const ORDER = ['critical', 'high', 'medium', 'low', 'info']
-    const groups = {}
-    for (const f of findings) {
-      const s = f.severity ?? 'info'
-      ;(groups[s] = groups[s] ?? []).push(f)
-    }
+          // group by severity
+          const ORDER = ["critical", "high", "medium", "low", "info"];
+          const groups = {};
+          for (const f of findings) {
+            const s = f.severity ?? "info";
+            (groups[s] = groups[s] ?? []).push(f);
+          }
 
-    area.innerHTML = ORDER.filter(s => groups[s]?.length).map(s => {
-      const grpFindings = groups[s]
-      return `<div class="severity-group">
-        <div class="severity-group-title" style="color:${sevColor(s)}">${sev(s)} <span style="color:var(--muted);font-weight:400">(${grpFindings.length})</span></div>
-        ${grpFindings.map(findingCard).join('')}
-      </div>`
-    }).join('')
+          area.innerHTML = ORDER.filter((s) => groups[s]?.length)
+            .map((s) => {
+              const grpFindings = groups[s];
+              return `<div class="severity-group">
+        <div class="severity-group-title" style="color:${sevColor(s)}"><span class="swatch" style="background:${sevColor(s)}"></span>${sev(s)} <span style="color:var(--muted);font-weight:400">(${grpFindings.length})</span></div>
+        ${grpFindings.map(findingCard).join("")}
+      </div>`;
+            })
+            .join("");
+        } catch (err) {
+          area.innerHTML = `<div class="empty">Could not load report: ${err.message}</div>`;
+        }
 
-  } catch (err) {
-    area.innerHTML = `<div class="empty">Could not load report: ${err.message}</div>`
-  }
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
 
-  panel.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
+      function findingCard(f) {
+        const loc = f.lineStart
+          ? `${f.filePath}:${f.lineStart}${f.lineEnd && f.lineEnd !== f.lineStart ? `–${f.lineEnd}` : ""}`
+          : f.filePath;
 
-function findingCard(f) {
-  const loc = f.lineStart
-    ? `${f.filePath}:${f.lineStart}${f.lineEnd && f.lineEnd !== f.lineStart ? `–${f.lineEnd}` : ''}`
-    : f.filePath
+        const snippet = f.codeSnippet
+          ? `<details><summary>▶ code snippet</summary><pre>${escHtml(f.codeSnippet)}</pre></details>`
+          : "";
 
-  const snippet = f.codeSnippet
-    ? `<details><summary>▶ code snippet</summary><pre>${escHtml(f.codeSnippet)}</pre></details>`
-    : ''
+        const newBadge = f.isNew ? '<span class="badge-new">NEW</span>' : "";
+        const conf = `<span class="confidence">${escHtml(f.confidence)}</span>`;
 
-  const newBadge = f.isNew ? '<span class="badge-new">NEW</span>' : ''
-  const conf = `<span class="confidence">${f.confidence}</span>`
-
-  return `<div class="finding-card ${f.severity ?? 'info'}">
+        return `<div class="finding-card ${f.severity ?? "info"}">
     <div class="finding-title">${escHtml(f.title)} ${newBadge} ${conf}</div>
     <div class="finding-meta">
-      <span>📁 ${escHtml(loc)}</span>
-      <span>🏷 ${escHtml(f.vulnerabilityType)}</span>
-      <span>🤖 ${(f.detectedBy ?? []).join(', ')}</span>
-      ${f.language ? `<span>🔤 ${f.language}</span>` : ''}
+      <span><span class="k">loc</span><span class="v">${escHtml(loc)}</span></span>
+      <span><span class="k">type</span><span class="v">${escHtml(f.vulnerabilityType)}</span></span>
+      <span><span class="k">by</span><span class="v">${escHtml((f.detectedBy ?? []).join(", "))}</span></span>
+      ${f.language ? `<span><span class="k">lang</span><span class="v">${escHtml(f.language)}</span></span>` : ""}
     </div>
     <div class="finding-body">
       <p><strong>Description</strong><br>${escHtml(f.description)}</p>
       <p><strong>Recommendation</strong><br>${escHtml(f.recommendation)}</p>
     </div>
     ${snippet}
-  </div>`
-}
+  </div>`;
+      }
 
-function escHtml(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
+      function escHtml(str) {
+        return String(str ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
 
-// ── init ─────────────────────────────────────────────────
+      // ── init ─────────────────────────────────────────────────
 
-document.getElementById('btn-refresh').addEventListener('click', () => {
-  hideError()
-  activeReport = null
-  document.getElementById('findings-panel').style.display = 'none'
-  loadConfig()
-  loadReports()
-})
+      document.getElementById("btn-refresh").addEventListener("click", () => {
+        hideError();
+        activeReport = null;
+        document.getElementById("findings-panel").style.display = "none";
+        loadConfig();
+        loadReports();
+      });
 
-document.getElementById('btn-close-findings').addEventListener('click', () => {
-  document.getElementById('findings-panel').style.display = 'none'
-  document.querySelectorAll('.report-row').forEach(r => r.classList.remove('active'))
-})
+      document
+        .getElementById("btn-close-findings")
+        .addEventListener("click", () => {
+          document.getElementById("findings-panel").style.display = "none";
+          document
+            .querySelectorAll(".report-row")
+            .forEach((r) => r.classList.remove("active"));
+        });
 
-loadConfig()
-loadReports()
-</script>
-</body>
+      loadConfig();
+      loadReports();
+    </script>
+  </body>
 </html>
