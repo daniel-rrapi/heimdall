@@ -21,7 +21,7 @@ vulnerable dependencies, …) rather than being tied to any one framework.
 
 ## 📹 Preview
 
-https://github.com/user-attachments/assets/68a77957-d472-4254-959f-35b76b116adc
+https://github.com/user-attachments/assets/8832c709-6263-4ec8-a29e-00d65db9a925
 
 ## ☑️ Prerequisites
 
