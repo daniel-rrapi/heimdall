@@ -57,7 +57,12 @@ heimdall scan --path ../my-app --backends codex
 heimdall web          # local dashboard at http://localhost:4040
 ```
 
-Uninstall: `~/.heimdall/install.sh --uninstall`.
+Uninstall (works regardless of how it was installed):
+
+```bash
+rm -f ~/.local/bin/heimdall   # the CLI command
+rm -rf ~/.heimdall            # the cloned source (one-line install only)
+```
 
 **Option B — run from the source:**
 
@@ -75,35 +80,33 @@ Run it via the npm scripts (which use `tsx`) — see Quick start below.
 
 ## 🚀 Quick start
 
+Heimdall is driven by three subcommands — **`scan`**, **`report`**, and
+**`web`**. Run `heimdall --help` to list them, or `heimdall scan --help` for the
+full set of scan flags.
+
 ```bash
 # See which files would be scanned, without calling any AI
-heimdall scan --dry-run --path ./my-app # if installed via script
-# or
-npm run scan:dry-run -- --path ../my-app # if using from the source
+heimdall scan --dry-run --path ./my-app
 
 # Scan a project (default backend: claude)
-heimdall scan --path ./my-app # if installed via script
-# or
-npm run scan -- --path ./my-app # if using from the source
+heimdall scan --path ./my-app
 
 # Use several backends in parallel (findings are merged)
 heimdall scan --path ./my-app --backends claude,gemini
-# or
-npm run scan -- --path ../my-app --backends claude,gemini
 
-# Only a subset of categories
+# Scan only a subset of categories
 heimdall scan --path ./my-app --categories injection,secrets,idor
-# or
-npm run scan -- --path ../my-app --categories injection,secrets,idor
 
 # Re-generate Markdown/SARIF from the most recent JSON report (no AI calls)
 heimdall report
-# or
-npm run report:last
 
 # Clear the deduplication state and start fresh
 npm run reset-state
 ```
+
+Running from the source tree instead of the installed CLI? Use the npm scripts —
+they call the same subcommands: `npm run scan -- --path ../my-app`,
+`npm run scan:dry-run -- --path ../my-app`, and `npm run report:last`.
 
 ## 🌐 Web dashboard
 

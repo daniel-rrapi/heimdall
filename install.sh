@@ -39,9 +39,14 @@ if [ "${1:-}" = "--uninstall" ] || [ "${1:-}" = "-u" ]; then
   else
     info "Nothing to remove at ${LINK}"
   fi
-  if [ -d "$HEIMDALL_HOME" ]; then
-    info "Source clone left at ${HEIMDALL_HOME} (remove with: rm -rf \"${HEIMDALL_HOME}\")"
+  # Remove the clone the installer created in HEIMDALL_HOME — but only if it
+  # really is a heimdall checkout, so an unrelated directory is never deleted.
+  if [ -d "$HEIMDALL_HOME" ] && grep -qs '"heimdall-cli"' "${HEIMDALL_HOME}/package.json"; then
+    rm -rf "$HEIMDALL_HOME"; info "Removed ${HEIMDALL_HOME}"
+  elif [ -d "$HEIMDALL_HOME" ]; then
+    info "Left ${HEIMDALL_HOME} in place (it does not look like a heimdall clone)."
   fi
+  info "heimdall uninstalled."
   exit 0
 fi
 
@@ -70,10 +75,12 @@ fi
 if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/package.json" ] && grep -q '"heimdall-cli"' "$SCRIPT_DIR/package.json" 2>/dev/null; then
   # Local mode — running from inside a clone.
   REPO_DIR="$SCRIPT_DIR"
+  BOOTSTRAP=0
   info "Installing from local checkout: ${REPO_DIR}"
 else
   # Bootstrap mode — fetch the source into HEIMDALL_HOME.
   REPO_DIR="$HEIMDALL_HOME"
+  BOOTSTRAP=1
   if [ -d "$REPO_DIR/.git" ]; then
     info "Updating existing checkout in ${REPO_DIR} (ref: ${REF})..."
     git -C "$REPO_DIR" fetch --depth 1 origin "$REF"
@@ -152,6 +159,14 @@ if [ -n "$RESOLVED" ] && [ "$RESOLVED" != "$LINK" ]; then
 fi
 
 # ── done ─────────────────────────────────────────────────────────────────────
+# Robust uninstall hint: remove the symlink (and, for a bootstrap install, the
+# clone the installer created). Avoids relying on install.sh living anywhere.
+if [ "${BOOTSTRAP}" -eq 1 ]; then
+  UNINSTALL_CMD="rm -f \"${LINK}\" && rm -rf \"${REPO_DIR}\""
+else
+  UNINSTALL_CMD="rm -f \"${LINK}\""
+fi
+
 info "Done — heimdall is installed."
 cat <<EOF
 
@@ -162,5 +177,6 @@ cat <<EOF
     heimdall web                              ${DIM}# dashboard at http://localhost:4040${RST}
 
   ${DIM}Source: ${REPO_DIR}
-  Update: re-run the installer  ·  Uninstall: ${REPO_DIR}/install.sh --uninstall${RST}
+  Update: re-run the installer
+  Uninstall: ${UNINSTALL_CMD}${RST}
 EOF

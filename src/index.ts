@@ -116,17 +116,43 @@ async function runWeb() {
   process.exit(code)
 }
 
+// Top-level help. Commands are registered with a `false` description so they
+// stay out of yargs' flat auto-generated list; instead they're grouped by
+// category here. Keep each line under ~78 chars so it renders on one row.
+const TOP_LEVEL_USAGE = [
+  '🔱 Heimdall — AI-powered security scanner for any codebase',
+  '',
+  'Usage: heimdall <command> [options]',
+  '',
+  'Scanning:',
+  '  heimdall scan [options]      Run the AI backends over a codebase',
+  '',
+  'Reports:',
+  '  heimdall report [options]    Rebuild reports from the most recent scan',
+  '',
+  'Dashboard:',
+  '  heimdall web                 Open the local web dashboard (port 4040)',
+  '',
+  'Run "heimdall <command> --help" to see the options for a command.',
+].join('\n')
+
 async function main() {
   await yargs(hideBin(process.argv))
     .scriptName('heimdall')
+    .usage(TOP_LEVEL_USAGE)
+    // Disable cliui wrapping: it otherwise strips the leading indentation from
+    // the categorized command lines in TOP_LEVEL_USAGE.
+    .wrap(null)
     // Treat `--no-dedup` as a literal flag name (set no-dedup=true), not as a
     // negation of a `dedup` option.
     .parserConfiguration({ 'boolean-negation': false })
     .command(
       'scan',
-      'Scan a codebase for security vulnerabilities',
+      // Hidden from the auto command list — grouped by category in TOP_LEVEL_USAGE.
+      false,
       (y) =>
         commonOptions(y)
+          .usage('Usage: heimdall scan [options]\n\nScan a codebase for security vulnerabilities: walk the source files,\nsend each to the configured AI backends, and write deduplicated reports.')
           .option('path', { type: 'string', description: 'Comma-separated directories to scan (default: current directory)' })
           .option('include', { type: 'string', description: 'Comma-separated glob patterns of files to scan (replaces the defaults)' })
           .option('exclude', { type: 'string', description: 'Comma-separated glob patterns to exclude (replaces the defaults)' })
@@ -141,16 +167,20 @@ async function main() {
     )
     .command(
       'report',
-      'Re-generate Markdown/SARIF reports from the most recent JSON scan (no AI calls)',
-      (y) => commonOptions(y),
+      false,
+      (y) =>
+        commonOptions(y).usage('Usage: heimdall report [options]\n\nRe-generate Markdown/SARIF reports from the most recent JSON scan, without any AI calls.'),
       (argv) => runReport(argv),
     )
     .command(
       'web',
-      'Start the local web dashboard (http://localhost:4040)',
-      (y) => y,
+      false,
+      (y) => y.usage('Usage: heimdall web\n\nStart the local web dashboard at http://localhost:4040.'),
       () => runWeb(),
     )
+    .example('heimdall scan --path ./my-app', 'Scan a project with the default backend')
+    .example('heimdall scan --dry-run --path ./my-app', 'List files only, no AI calls')
+    .example('heimdall report', 'Rebuild reports from the most recent scan')
     .demandCommand(1, 'Devi specificare un comando (scan, report, web). Usa "heimdall --help" per l\'elenco.')
     .strict()
     .help()
